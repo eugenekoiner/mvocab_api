@@ -6,36 +6,37 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
 @AllArgsConstructor
 
 public class UserController {
-    private final UserService service;
+    private final UserService userService;
 
     @GetMapping
     public List<User> findAllUsers () {
-        return service.findAllUsers();
+        return userService.findAllUsers();
     }
     @PostMapping("save_user")
     public User saveUser(@RequestBody User user) {
-        return service.saveUser(user);
+        return userService.saveUser(user);
     }
 
     @GetMapping("/{id}")
-    public User findById(@PathVariable int id) {
-        return service.findById(id);
+    public Optional<User> findById(@PathVariable Integer id) {
+        return userService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable int id, @RequestBody User user) {
-        return service.updateUser(id, user);
+    public User updateUser(@PathVariable Integer id, @RequestBody User user) {
+        return userService.updateUser(id, user);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteUser (@PathVariable int id) {
-        return service.deleteUser(id);
+    public String deleteUser (@PathVariable Integer id) {
+        return userService.deleteUser(id);
     }
 
 }

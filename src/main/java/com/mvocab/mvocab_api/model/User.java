@@ -1,15 +1,16 @@
 package com.mvocab.mvocab_api.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NonNull;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Data
-@Builder
+@Entity
+@Table(name = "user")
 public class User {
-    @NonNull
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @NonNull
+    @Column(unique = true)
     private String email;
     private String name;
     private String phone;
