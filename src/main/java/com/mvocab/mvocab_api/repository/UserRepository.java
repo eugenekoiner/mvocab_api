@@ -18,4 +18,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Modifying
     @Query(value = "UPDATE UserEntity u SET u.email = :#{#user.email}, u.name = :#{#user.name}, u.phone = :#{#user.phone} WHERE u.id = :id")
     int updateUserById(@Param("id") Integer id, @Param("user") UserEntity userEntity);
+
+    UserEntity findByEmail (String email);
+
 }

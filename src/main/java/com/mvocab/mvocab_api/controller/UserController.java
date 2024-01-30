@@ -1,14 +1,17 @@
 package com.mvocab.mvocab_api.controller;
 
+import com.mvocab.mvocab_api.ResponseMessage;
 import com.mvocab.mvocab_api.entity.UserEntity;
-import com.mvocab.mvocab_api.exeption.UserAlreadyExistException;
 import com.mvocab.mvocab_api.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.mvocab.mvocab_api.ResponseMessage.responseMessage;
 
 @RestController
 @RequestMapping("/api/users")
@@ -18,35 +21,47 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserEntity> findAllUsers () {
+    public List<UserEntity> findAllUsers() {
         return userService.findAllUsers();
     }
 
     @PostMapping("register")
-    public ResponseEntity<String> registerUser(@RequestBody UserEntity userEntity) {
+    public ResponseEntity<Object> registerUser(@RequestBody UserEntity userEntity) {
         try {
             UserEntity user = userService.registerUser(userEntity);
-            return ResponseEntity.ok("{\"id\":" + user.getId() + "}");
-        } catch (UserAlreadyExistException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return responseMessage("id", user.getId());
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("ERROR");
+            return responseMessage("message", e.getMessage());
         }
     }
 
-    @GetMapping("/{id}")
-    public Optional<UserEntity> findById(@PathVariable Integer id) {
-        return userService.findById(id);
+    @GetMapping("{id}")
+    public ResponseEntity<Object> findById(@PathVariable Integer id) {
+        try {
+            return responseMessage(userService.findById(id));
+        } catch (Exception e) {
+            return responseMessage("message", e.getMessage());
+        }
     }
 
-    @PutMapping("/{id}")
-    public UserEntity updateUser(@PathVariable Integer id, @RequestBody UserEntity userEntity) {
-        return userService.updateUser(id, userEntity);
+    @PutMapping("{id}")
+    public ResponseEntity<Object> updateUser(@PathVariable Integer id, @RequestBody UserEntity userEntity) {
+        try {
+            return responseMessage(userService.updateUser(id, userEntity));
+        } catch (DataIntegrityViolationException e) {
+            return responseMessage("message", "duplicate entry");
+        } catch (Exception e) {
+            return responseMessage("message", e.getMessage());
+        }
     }
 
-    @DeleteMapping("/{id}")
-    public String deleteUser (@PathVariable Integer id) {
-        return userService.deleteUser(id);
+    @DeleteMapping("{id}")
+    public ResponseEntity<Object> deleteUser(@PathVariable Integer id) {
+        try {
+            return responseMessage("message", userService.deleteUser(id));
+        } catch (Exception e) {
+            return responseMessage("message", e.getMessage());
+        }
     }
 
 }
