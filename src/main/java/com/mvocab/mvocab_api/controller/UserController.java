@@ -1,8 +1,10 @@
 package com.mvocab.mvocab_api.controller;
 
-import com.mvocab.mvocab_api.model.User;
+import com.mvocab.mvocab_api.entity.UserEntity;
+import com.mvocab.mvocab_api.exeption.UserAlreadyExistException;
 import com.mvocab.mvocab_api.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,22 +18,30 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<User> findAllUsers () {
+    public List<UserEntity> findAllUsers () {
         return userService.findAllUsers();
     }
-    @PostMapping("save_user")
-    public User saveUser(@RequestBody User user) {
-        return userService.saveUser(user);
+
+    @PostMapping("register")
+    public ResponseEntity<String> registerUser(@RequestBody UserEntity userEntity) {
+        try {
+            UserEntity user = userService.registerUser(userEntity);
+            return ResponseEntity.ok("{\"id\":" + user.getId() + "}");
+        } catch (UserAlreadyExistException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("ERROR");
+        }
     }
 
     @GetMapping("/{id}")
-    public Optional<User> findById(@PathVariable Integer id) {
+    public Optional<UserEntity> findById(@PathVariable Integer id) {
         return userService.findById(id);
     }
 
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Integer id, @RequestBody User user) {
-        return userService.updateUser(id, user);
+    public UserEntity updateUser(@PathVariable Integer id, @RequestBody UserEntity userEntity) {
+        return userService.updateUser(id, userEntity);
     }
 
     @DeleteMapping("/{id}")

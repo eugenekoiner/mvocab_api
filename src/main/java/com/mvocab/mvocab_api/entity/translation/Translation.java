@@ -1,4 +1,4 @@
-package com.mvocab.mvocab_api.model.translation;
+package com.mvocab.mvocab_api.entity.translation;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.Data;
 @Entity
 @Table(name = "translation")
 public class Translation {
-    @EmbeddedId
-    private TranslationId id;
+    @Id
+    private int id;
     private String translation;
 }

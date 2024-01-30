@@ -1,4 +1,4 @@
-package com.mvocab.mvocab_api.model;
+package com.mvocab.mvocab_api.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "word")
-public class Word {
+public class WordEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

@@ -1,6 +1,6 @@
 package com.mvocab.mvocab_api.service.implimentation;
 
-import com.mvocab.mvocab_api.model.Word;
+import com.mvocab.mvocab_api.entity.WordEntity;
 import com.mvocab.mvocab_api.repository.WordRepository;
 import com.mvocab.mvocab_api.service.WordService;
 import lombok.AllArgsConstructor;
@@ -17,17 +17,17 @@ public class WordServiceImpl implements WordService {
 
     //todo: понять как сделать пагинацию
     @Override
-    public List<Word> findAllWords() {
+    public List<WordEntity> findAllWords() {
         return wordRepository.findAll();
     }
 
     @Override
-    public Optional<Word> findById(Integer id) {
+    public Optional<WordEntity> findById(Integer id) {
         return wordRepository.findById(id);
     }
 
     @Override
-    public Word updateWord(Integer id, Word word) {
+    public WordEntity updateWord(Integer id, WordEntity wordEntity) {
         return null;
     }
 
