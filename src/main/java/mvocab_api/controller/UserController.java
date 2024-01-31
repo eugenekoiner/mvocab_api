@@ -34,7 +34,7 @@ public class UserController {
             UserEntity user = userService.registerUser(userEntity);
             return ResponseMessage.responseMessage("id", user.getId());
         } catch (DataIntegrityViolationException e) {
-            return ResponseMessage.responseMessage("message", "duplicate entry");
+            return ResponseMessage.responseMessage("message", "duplicate phone entry");
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
