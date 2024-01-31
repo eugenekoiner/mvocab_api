@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-    List<UserEntity> findAllUsers();
+    List<UserEntity> findAllUsers(int page, int size);
     UserEntity registerUser(UserEntity userEntity) throws UserAlreadyExistException;
     Optional<UserEntity> findById(Integer id);
     UserEntity updateUser(Integer id, UserEntity userEntity) throws UserDoesNotExistException;

@@ -21,8 +21,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public List<UserEntity> findAllUsers() {
-        return userService.findAllUsers();
+    public List<UserEntity> findAllUsers(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        return userService.findAllUsers(page, size);
     }
 
     @PostMapping("register")
