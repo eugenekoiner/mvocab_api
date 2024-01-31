@@ -1,8 +1,8 @@
-package com.mvocab.mvocab_api.controller;
+package mvocab_api.controller;
 
 
-import com.mvocab.mvocab_api.entity.WordEntity;
-import com.mvocab.mvocab_api.service.WordService;
+import mvocab_api.entity.WordEntity;
+import mvocab_api.service.WordService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

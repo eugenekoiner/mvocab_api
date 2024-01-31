@@ -1,4 +1,4 @@
-package com.mvocab.mvocab_api.exeption;
+package mvocab_api.exeption;
 
 public class UserDoesNotExistException extends Exception {
     public UserDoesNotExistException() {

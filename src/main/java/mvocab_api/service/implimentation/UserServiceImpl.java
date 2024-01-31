@@ -1,15 +1,15 @@
-package com.mvocab.mvocab_api.service.implimentation;
+package mvocab_api.service.implimentation;
 
-import com.mvocab.mvocab_api.entity.UserEntity;
-import com.mvocab.mvocab_api.exeption.UserAlreadyExistException;
-import com.mvocab.mvocab_api.exeption.UserDoesNotExistException;
-import com.mvocab.mvocab_api.repository.UserRepository;
-import com.mvocab.mvocab_api.service.UserService;
+import mvocab_api.entity.UserEntity;
+import mvocab_api.entity.UsersResponse;
+import mvocab_api.exeption.UserAlreadyExistException;
+import mvocab_api.exeption.UserDoesNotExistException;
+import mvocab_api.repository.UserRepository;
+import mvocab_api.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,14 +22,23 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public List<UserEntity> findAllUsers(int page, int size) {
+    public UsersResponse findAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return userRepository.findAll(pageable).getContent();
+        Page<UserEntity> users = userRepository.findAll(pageable);
+        List<UserEntity> content = users.getContent();
+        UsersResponse usersResponse = new UsersResponse();
+        usersResponse.setContent(content);
+        usersResponse.setPage(users.getNumber());
+        usersResponse.setSize(users.getSize());
+        usersResponse.setTotalElements(users.getTotalElements());
+        usersResponse.setTotalPages(users.getTotalPages());
+        usersResponse.setLast(users.isLast());
+
+        return usersResponse;
 
     }
 
     @Override
-    //todo: перенести в auth
     public UserEntity registerUser(UserEntity userEntity) throws UserAlreadyExistException {
         if (userRepository.findByEmail(userEntity.getEmail()) != null) {
             throw new UserAlreadyExistException();

@@ -1,4 +1,4 @@
-package com.mvocab.mvocab_api;
+package mvocab_api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

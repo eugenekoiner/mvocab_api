@@ -1,4 +1,4 @@
-package com.mvocab.mvocab_api.entity;
+package mvocab_api.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

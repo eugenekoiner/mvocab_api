@@ -1,4 +1,4 @@
-package com.mvocab.mvocab_api.repository;
+package mvocab_api.repository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

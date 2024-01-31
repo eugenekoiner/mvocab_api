@@ -1,8 +1,8 @@
-package com.mvocab.mvocab_api.service.implimentation;
+package mvocab_api.service.implimentation;
 
-import com.mvocab.mvocab_api.entity.WordEntity;
-import com.mvocab.mvocab_api.repository.WordRepository;
-import com.mvocab.mvocab_api.service.WordService;
+import mvocab_api.entity.WordEntity;
+import mvocab_api.repository.WordRepository;
+import mvocab_api.service.WordService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

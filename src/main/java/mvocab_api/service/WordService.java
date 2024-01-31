@@ -1,6 +1,6 @@
-package com.mvocab.mvocab_api.service;
+package mvocab_api.service;
 
-import com.mvocab.mvocab_api.entity.WordEntity;
+import mvocab_api.entity.WordEntity;
 
 import java.util.List;
 import java.util.Optional;

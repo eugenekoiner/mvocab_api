@@ -1,4 +1,4 @@
-package com.mvocab.mvocab_api.entity.translation;
+package mvocab_api.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "translation")
-public class Translation {
+public class TranslationEntity {
     @Id
     private int id;
     private String translation;
