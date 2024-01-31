@@ -20,8 +20,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<UsersResponse> findAllUsers(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
-        return new ResponseEntity<>(userService.findAllUsers(page, size), HttpStatus.OK);
+    public ResponseEntity<Object> findAllUsers(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+        try {
+            return new ResponseEntity<>(userService.findAllUsers(page, size), HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseMessage.responseMessage("message", e.getMessage());
+        }
     }
 
     @PostMapping("register")
@@ -29,6 +33,8 @@ public class UserController {
         try {
             UserEntity user = userService.registerUser(userEntity);
             return ResponseMessage.responseMessage("id", user.getId());
+        } catch (DataIntegrityViolationException e) {
+            return ResponseMessage.responseMessage("message", "duplicate entry");
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
