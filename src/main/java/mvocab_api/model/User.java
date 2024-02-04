@@ -10,7 +10,7 @@ import mvocab_api.entity.UserEntity;
 @Data
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer id;
     @Column(unique = true)
     private String email;

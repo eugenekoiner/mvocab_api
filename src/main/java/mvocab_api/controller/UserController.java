@@ -2,6 +2,7 @@ package mvocab_api.controller;
 
 import mvocab_api.entity.UserEntity;
 import mvocab_api.entity.UsersResponse;
+import mvocab_api.model.User;
 import mvocab_api.service.UserService;
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.ResponseMessage;
@@ -19,22 +20,22 @@ import static mvocab_api.entity.ResponseMessage.responseMessage;
 public class UserController {
     private final UserService userService;
 
-    @GetMapping
-    public ResponseEntity<Object> findAllUsers(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+    @PostMapping("register")
+    public ResponseEntity<Object> registerUser(@RequestBody UserEntity userEntity) {
         try {
-            return new ResponseEntity<>(userService.findAllUsers(page, size), HttpStatus.OK);
+            UserEntity user = userService.registerUser(userEntity);
+            return ResponseMessage.responseMessage("id", User.toModel(user).getId());
+        } catch (DataIntegrityViolationException e) {
+            return ResponseMessage.responseMessage("message", "duplicate phone entry");
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
     }
 
-    @PostMapping("register")
-    public ResponseEntity<Object> registerUser(@RequestBody UserEntity userEntity) {
+    @GetMapping
+    public ResponseEntity<Object> findAllUsers(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
         try {
-            UserEntity user = userService.registerUser(userEntity);
-            return ResponseMessage.responseMessage("id", user.getId());
-        } catch (DataIntegrityViolationException e) {
-            return ResponseMessage.responseMessage("message", "duplicate phone entry");
+            return new ResponseEntity<>(userService.findAllUsers(page, size), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }

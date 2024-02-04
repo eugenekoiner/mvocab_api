@@ -8,7 +8,7 @@ import lombok.Data;
 @Table(name = "word")
 public class WordEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer id;
     @Column(unique = true)
     private String word;
