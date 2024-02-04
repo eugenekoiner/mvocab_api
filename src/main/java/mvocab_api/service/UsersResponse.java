@@ -1,12 +1,13 @@
-package mvocab_api.entity;
+package mvocab_api.service;
 
 import lombok.Data;
+import mvocab_api.model.User;
 
 import java.util.List;
 
 @Data
 public class UsersResponse {
-    private List<UserEntity> content;
+    private List<User> content;
     private int page;
     private int size;
     private long totalElements;

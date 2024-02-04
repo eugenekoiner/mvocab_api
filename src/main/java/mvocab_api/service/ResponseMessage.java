@@ -1,4 +1,4 @@
-package mvocab_api.entity;
+package mvocab_api.service;
 
 import org.springframework.http.ResponseEntity;
 
