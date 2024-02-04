@@ -1,17 +1,14 @@
 package mvocab_api.controller;
 
-import mvocab_api.entity.UserEntity;
-import mvocab_api.entity.UsersResponse;
-import mvocab_api.model.User;
-import mvocab_api.service.UserService;
 import lombok.AllArgsConstructor;
-import mvocab_api.entity.ResponseMessage;
+import mvocab_api.entity.UserEntity;
+import mvocab_api.model.User;
+import mvocab_api.service.ResponseMessage;
+import mvocab_api.service.UserService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import static mvocab_api.entity.ResponseMessage.responseMessage;
 
 @RestController
 @RequestMapping("/api/users")
@@ -44,7 +41,7 @@ public class UserController {
     @GetMapping("{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
-            return ResponseMessage.responseMessage(userService.findById(id));
+            return ResponseMessage.responseMessage(User.toModel(userService.findById(id)));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
@@ -65,6 +62,15 @@ public class UserController {
     public ResponseEntity<Object> deleteUser(@PathVariable Integer id) {
         try {
             return ResponseMessage.responseMessage("message", userService.deleteUser(id));
+        } catch (Exception e) {
+            return ResponseMessage.responseMessage("message", e.getMessage());
+        }
+    }
+
+    @GetMapping("{id}/langs")
+    public ResponseEntity<Object> findLangsByUserId(@PathVariable Integer id) {
+        try {
+            return ResponseMessage.responseMessage(userService.findLangsByUserId(id));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }

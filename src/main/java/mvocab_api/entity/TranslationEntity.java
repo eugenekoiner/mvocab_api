@@ -2,8 +2,7 @@ package mvocab_api.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
-import static jakarta.persistence.InheritanceType.JOINED;
+import mvocab_api.entity.entityIds.TranslationEntityId;
 
 @Data
 @Entity
