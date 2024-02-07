@@ -76,4 +76,22 @@ public class UserController {
         }
     }
 
+    @PostMapping("{id}/langs/{langId}")
+    public ResponseEntity<Object> addLangByUserId(@PathVariable Integer id, @PathVariable Integer langId) {
+        try {
+            return ResponseMessage.responseMessage(userService.addLangByUserId(id, langId));
+        } catch (Exception e) {
+            return ResponseMessage.responseMessage("message", e.getMessage());
+        }
+    }
+
+    @DeleteMapping("{id}/langs/{langId}")
+    public ResponseEntity<Object> deleteLangByUserId(@PathVariable Integer id, @PathVariable Integer langId) {
+        try {
+            return ResponseMessage.responseMessage(userService.deleteLangByUserId(id, langId));
+        } catch (Exception e) {
+            return ResponseMessage.responseMessage("message", e.getMessage());
+        }
+    }
+
 }

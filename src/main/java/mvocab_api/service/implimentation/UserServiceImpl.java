@@ -75,4 +75,14 @@ public class UserServiceImpl implements UserService {
         findById(id);
         return userRepository.findLangsByUserId(id);
     }
+
+    @Override
+    public Object addLangByUserId(Integer id, Integer langId) {
+        return userRepository.addLangByUserId(id, langId);
+    }
+
+    @Override
+    public Object deleteLangByUserId(Integer id, Integer langId) {
+        return userRepository.deleteLangByUserId(id, langId);
+    }
 }

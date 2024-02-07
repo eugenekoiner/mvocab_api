@@ -20,4 +20,8 @@ public interface UserService {
     String deleteUser(Integer id) throws UserDoesNotExistException;
 
     List<LangEntity> findLangsByUserId(Integer id) throws UserDoesNotExistException;
+
+    Object addLangByUserId(Integer id, Integer langId);
+
+    Object deleteLangByUserId(Integer id, Integer langId);
 }

@@ -28,4 +28,13 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Query("SELECT ul.id.lang FROM User__langEntity ul WHERE ul.id.user.id = :userId")
     List<LangEntity> findLangsByUserId(@Param("userId") Integer userId);
 
+    @Transactional
+    @Modifying
+    @Query(value = "INSERT INTO user__lang (user_id, lang_id) VALUES (?1, ?2)", nativeQuery = true)
+    int addLangByUserId(Integer userId, Integer langId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM user__lang WHERE user_id = ?1 AND lang_id = ?2", nativeQuery = true)
+    int deleteLangByUserId(Integer userId, Integer langId);
 }

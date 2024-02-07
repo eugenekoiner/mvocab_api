@@ -15,7 +15,7 @@ public class Word {
     private String word;
     //private String transcription;
     //private String audio;
-    private String lang_id;
+    private Integer lang_id;
     private String translation;
 
     public static Word toModel(WordEntity entity) {

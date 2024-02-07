@@ -14,6 +14,6 @@ public class WordEntity {
     private String word;
     private String transcription;
     private String audio;
-    private String lang_id;
+    private Integer lang_id;
     private String translation;
 }
