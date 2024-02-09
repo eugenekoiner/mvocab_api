@@ -31,10 +31,19 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO user__lang (user_id, lang_id) VALUES (?1, ?2)", nativeQuery = true)
-    int addLangByUserId(Integer userId, Integer langId);
+    void addLangByUserId(Integer userId, Integer langId);
 
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM user__lang WHERE user_id = ?1 AND lang_id = ?2", nativeQuery = true)
     int deleteLangByUserId(Integer userId, Integer langId);
+
+    @Modifying
+    @Query("SELECT uw.id.word FROM User__wordEntity uw WHERE uw.id.user.id = :userId")
+    List<LangEntity> findWordsByUserId(@Param("userId") Integer userId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "INSERT INTO user__word (user_id, word_id) VALUES (?1, ?2)", nativeQuery = true)
+    void addWordByUserId(Integer userId, Integer langId);
 }

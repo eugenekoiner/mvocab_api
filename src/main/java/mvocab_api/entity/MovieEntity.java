@@ -1,0 +1,21 @@
+package mvocab_api.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Data;
+
+@Data
+@Entity
+@Table(name = "movie")
+public class MovieEntity {
+    @Id
+    @GeneratedValue
+    private Integer id;
+    private String description;
+    private String name;
+    private String img;
+    private Integer rating; 
+    private String trailer;
+}

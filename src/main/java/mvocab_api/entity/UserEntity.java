@@ -1,7 +1,9 @@
 package mvocab_api.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -17,4 +19,12 @@ public class UserEntity {
     @Column(unique = true)
     private String phone;
     private String favorites;
+
+    @ManyToMany
+    @JoinTable(name = "user__lang", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "lang_id")})
+    private List<LangEntity> userLangs;
+
+    @ManyToMany
+    @JoinTable(name = "user__word", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "word_id")})
+    private List<WordEntity> userWords;
 }

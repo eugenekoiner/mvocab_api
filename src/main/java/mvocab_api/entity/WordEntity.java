@@ -3,6 +3,8 @@ package mvocab_api.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 @Entity
 @Table(name = "word")
