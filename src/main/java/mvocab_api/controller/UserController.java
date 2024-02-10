@@ -107,7 +107,7 @@ public class UserController {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
     }
-//todo: "message": "JDBC exception executing SQL [INSERT INTO user__word (user_id, word_id) VALUES (?, ?)] [(conn=2735) Field 'movie_id' doesn't have a default value] [n/a]"
+
     // добавить слово в словарь пользователя
     @PostMapping("{id}/words/{wordId}")
     public ResponseEntity<Object> addWordByUserId(@PathVariable Integer id, @PathVariable Integer wordId) {

@@ -1,7 +1,10 @@
 package mvocab_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Entity
@@ -10,9 +13,19 @@ public class MovieEntity {
     @Id
     @GeneratedValue
     private Integer id;
-    private String description;
+    @Column(nullable = false)
     private String name;
+    private String description;
     private String img;
     private Integer rating; 
     private String trailer;
+
+    @ManyToMany(mappedBy = "userMovies")
+    @JsonIgnore
+    private List<UserEntity> movieUsers;
+
+    @OneToMany
+    @JoinTable(name = "movie__word", joinColumns = {@JoinColumn(name = "movie_id")}, inverseJoinColumns = {@JoinColumn(name = "word_id")})
+    @JsonIgnore
+    private List<WordEntity> movieWords;
 }

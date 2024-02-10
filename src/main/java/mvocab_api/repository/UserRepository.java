@@ -14,13 +14,13 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM UserEntity f where f.id = ?1")
-    int deleteUserById(Integer id);
+    @Query(value = "UPDATE UserEntity u SET u.email = :#{#user.email}, u.name = :#{#user.name}, u.phone = :#{#user.phone} WHERE u.id = :id")
+    int updateUserById(@Param("id") Integer id, @Param("user") UserEntity userEntity);
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE UserEntity u SET u.email = :#{#user.email}, u.name = :#{#user.name}, u.phone = :#{#user.phone} WHERE u.id = :id")
-    int updateUserById(@Param("id") Integer id, @Param("user") UserEntity userEntity);
+    @Query(value = "DELETE FROM UserEntity f where f.id = ?1")
+    int deleteUserById(Integer id);
 
     UserEntity findByEmail (String email);
 
