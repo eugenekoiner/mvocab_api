@@ -27,4 +27,8 @@ public class UserEntity {
     @ManyToMany
     @JoinTable(name = "user__word", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "word_id")})
     private List<WordEntity> userWords;
+
+    @ManyToMany
+    @JoinTable(name = "user__movie", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "movie_id")})
+    private List<MovieEntity> userMovies;
 }
