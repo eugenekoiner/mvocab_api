@@ -1,5 +1,6 @@
 package mvocab_api.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,4 +19,11 @@ public class WordEntity {
     private String audio;
     private Integer lang_id;
     private String translation;
+
+    @ManyToMany(mappedBy = "userWords")
+    @JsonIgnore
+    private List<UserEntity> users;
+
+    @ManyToOne
+    private MovieEntity movie;
 }

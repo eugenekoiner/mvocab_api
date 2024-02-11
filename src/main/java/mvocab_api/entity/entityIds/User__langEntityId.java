@@ -13,10 +13,10 @@ import java.io.Serializable;
 @Embeddable
 public class User__langEntityId implements Serializable {
     @ManyToOne
-    @JoinColumn(name = "lang_id")
-    private LangEntity lang;
-
-    @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @ManyToOne
+    @JoinColumn(name = "lang_id")
+    private LangEntity lang;
 }

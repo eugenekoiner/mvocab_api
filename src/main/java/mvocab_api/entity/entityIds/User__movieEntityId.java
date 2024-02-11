@@ -13,10 +13,10 @@ import java.io.Serializable;
 @Embeddable
 public class User__movieEntityId implements Serializable {
     @ManyToOne
-    @JoinColumn(name = "movie_id")
-    private MovieEntity movie;
-
-    @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @ManyToOne
+    @JoinColumn(name = "movie_id")
+    private MovieEntity movie;
 }

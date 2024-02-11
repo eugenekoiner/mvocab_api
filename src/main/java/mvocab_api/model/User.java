@@ -5,18 +5,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
+import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.UserEntity;
+
+import java.util.List;
 
 @Data
 public class User {
-    @Id
-    @GeneratedValue
     private Integer id;
-    @Column(unique = true)
     private String email;
     private String name;
-    @Column(unique = true)
     private String phone;
+    private List<LangEntity> userLangs;
 
     public static User toModel(UserEntity entity) {
         User model = new User();
@@ -24,6 +24,7 @@ public class User {
         model.setName(entity.getName());
         model.setEmail(entity.getEmail());
         model.setPhone(entity.getPhone());
+        model.setUserLangs(entity.getUserLangs());
         return model;
     }
 }

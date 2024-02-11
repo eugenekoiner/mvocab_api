@@ -117,6 +117,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Object addWordByUserId(Integer id, Integer wordId) throws Exception {
+        //if (movie)
         try {
             userRepository.addWordByUserId(id, wordId);
         } catch (DataIntegrityViolationException e) {
