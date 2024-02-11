@@ -5,6 +5,7 @@ import mvocab_api.entity.MovieEntity;
 import mvocab_api.entity.WordEntity;
 import mvocab_api.exeption.DoesNotExistException;
 import mvocab_api.model.Word;
+import mvocab_api.model.WordListDTO;
 import mvocab_api.repository.WordRepository;
 import mvocab_api.service.WordService;
 import mvocab_api.service.WordsResponse;
@@ -33,7 +34,7 @@ public class WordServiceImpl implements WordService {
     public WordsResponse findAllWords(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<WordEntity> words = wordRepository.findAll(pageable);
-        List<Word> content = words.stream().map(Word::toModel).collect(Collectors.toList());
+        List<WordListDTO> content = words.stream().map(WordListDTO::toModel).collect(Collectors.toList());
         WordsResponse wordsResponse = new WordsResponse();
         wordsResponse.setContent(content);
         wordsResponse.setPage(words.getNumber());
@@ -45,8 +46,8 @@ public class WordServiceImpl implements WordService {
     }
 
     @Override
-    public Optional<WordEntity> findById(Integer id) {
-        return wordRepository.findById(id);
+    public WordEntity findById(Integer id) throws DoesNotExistException {
+        return wordRepository.findById(id).orElseThrow(() -> new DoesNotExistException("word"));
     }
 
     @Override

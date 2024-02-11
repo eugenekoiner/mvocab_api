@@ -8,7 +8,7 @@ import lombok.Data;
 import mvocab_api.entity.WordEntity;
 
 @Data
-public class Word {
+public class WordByIdDTO {
     @Id
     @GeneratedValue
     private Integer id;
@@ -20,8 +20,8 @@ public class Word {
     @JsonRawValue
     private String translation;
 
-    public static Word toModel(WordEntity entity) {
-        Word model = new Word();
+    public static WordByIdDTO toModel(WordEntity entity) {
+        WordByIdDTO model = new WordByIdDTO();
         model.setId(entity.getId());
         model.setWord(entity.getWord());
         //model.setTranscription(entity.getTranscription());

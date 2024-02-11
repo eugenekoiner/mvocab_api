@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface WordService {
     WordsResponse findAllWords(int page, int size);
 
-    Optional<WordEntity> findById(Integer id);
+    WordEntity findById(Integer id) throws DoesNotExistException;
 
     WordEntity updateWord(Integer id, WordEntity wordEntity) throws DoesNotExistException;
 

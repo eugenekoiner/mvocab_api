@@ -1,6 +1,7 @@
 package mvocab_api.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -18,7 +19,10 @@ public class WordEntity {
     private String transcription;
     private String audio;
     private Integer lang_id;
-    private String translation;
+
+    @JsonManagedReference
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "word")
+    private TranslationEntity wordTranslation;
 
     @ManyToMany(mappedBy = "userWords")
     @JsonIgnore

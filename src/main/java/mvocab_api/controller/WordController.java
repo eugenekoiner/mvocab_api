@@ -2,8 +2,9 @@ package mvocab_api.controller;
 
 
 import lombok.AllArgsConstructor;
-import mvocab_api.entity.MovieEntity;
 import mvocab_api.entity.WordEntity;
+import mvocab_api.model.Word;
+import mvocab_api.model.WordByIdDTO;
 import mvocab_api.service.ResponseMessage;
 import mvocab_api.service.WordService;
 import org.springframework.http.HttpStatus;
@@ -43,7 +44,7 @@ public class WordController {
     @GetMapping("{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
-            return ResponseMessage.responseMessage(wordService.findById(id));
+            return ResponseMessage.responseMessage(WordByIdDTO.toModel(wordService.findById(id)));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
