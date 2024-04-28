@@ -118,7 +118,7 @@ public class UserController {
         }
     }
 
-    // удалить слово из изучаемых у конкретного пользователя
+    // удалить слово из словаря пользователя
     @DeleteMapping("{id}/words/{wordId}")
     public ResponseEntity<Object> deleteWordByUserId(@PathVariable Integer id, @PathVariable Integer wordId) {
         try {
