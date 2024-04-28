@@ -112,4 +112,12 @@ public class UserServiceImpl implements UserService {
         }
         return "success";
     }
+
+    @Override
+    public String deleteWordByUserId(Integer id, Integer wordId) throws DoesNotExistException {
+        if (userRepository.deleteWordByUserId(id, wordId) < 1) {
+            throw new DoesNotExistException("word");
+        }
+        return "removed";
+    }
 }

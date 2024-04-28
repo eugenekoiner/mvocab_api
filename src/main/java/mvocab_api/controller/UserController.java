@@ -118,6 +118,16 @@ public class UserController {
         }
     }
 
+    // удалить слово из изучаемых у конкретного пользователя
+    @DeleteMapping("{id}/words/{wordId}")
+    public ResponseEntity<Object> deleteWordByUserId(@PathVariable Integer id, @PathVariable Integer wordId) {
+        try {
+            return ResponseMessage.responseMessage("message", userService.deleteWordByUserId(id, wordId));
+        } catch (Exception e) {
+            return ResponseMessage.responseMessage("message", e.getMessage());
+        }
+    }
+
 
 
 }

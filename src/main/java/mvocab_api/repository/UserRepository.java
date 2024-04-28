@@ -2,6 +2,7 @@ package mvocab_api.repository;
 
 import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.UserEntity;
+import mvocab_api.entity.WordEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -40,10 +41,15 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
     @Modifying
     @Query("SELECT uw.id.word FROM User__wordEntity uw WHERE uw.id.user.id = :userId")
-    List<LangEntity> findWordsByUserId(@Param("userId") Integer userId);
+    List<WordEntity> findWordsByUserId(@Param("userId") Integer userId);
 
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO user__word (user_id, word_id) VALUES (?1, ?2)", nativeQuery = true)
     void addWordByUserId(Integer userId, Integer langId);
+
+    @Transactional
+    @Modifying
+    @Query(value = "DELETE FROM user__word WHERE user_id = ?1 AND word_id = ?2", nativeQuery = true)
+    int deleteWordByUserId(Integer userId, Integer wordId);
 }
