@@ -3,23 +3,20 @@ package mvocab_api.service.implimentation;
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.UserEntity;
-import mvocab_api.service.ResponseMessage;
-import mvocab_api.service.UsersResponse;
 import mvocab_api.exeption.AlreadyExistException;
 import mvocab_api.exeption.DoesNotExistException;
-import mvocab_api.model.User;
+import mvocab_api.model.UserListDTO;
 import mvocab_api.repository.UserRepository;
+import mvocab_api.service.EntityMapper;
+import mvocab_api.service.PaginationResponse;
 import mvocab_api.service.UserService;
-import org.checkerframework.checker.units.qual.A;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,20 +28,11 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public UsersResponse findAllUsers(int page, int size) {
+    public PaginationResponse findAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<UserEntity> users = userRepository.findAll(pageable);
-        List<User> content = users.stream().map(User::toModel).collect(Collectors.toList());
-        UsersResponse usersResponse = new UsersResponse();
-        usersResponse.setContent(content);
-        usersResponse.setPage(users.getNumber());
-        usersResponse.setSize(users.getSize());
-        usersResponse.setTotalElements(users.getTotalElements());
-        usersResponse.setTotalPages(users.getTotalPages());
-        usersResponse.setLast(users.isLast());
-
-        return usersResponse;
-
+        Page<UserEntity> usersPage = userRepository.findAll(pageable);
+        List<UserListDTO> content = usersPage.stream().map(EntityMapper.INSTANCE::toUserForList).collect(Collectors.toList());
+        return new PaginationResponse<>(new PageImpl<>(content, pageable, usersPage.getTotalElements()));
     }
 
     @Override
@@ -117,11 +105,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Object addWordByUserId(Integer id, Integer wordId) throws Exception {
-        //if (movie)
         try {
             userRepository.addWordByUserId(id, wordId);
         } catch (DataIntegrityViolationException e) {
-            throw (e.getMessage().toLowerCase().contains("duplicate")) ? new AlreadyExistException("lang") : new DoesNotExistException("user", "lang");
+            throw (e.getMessage().toLowerCase().contains("duplicate")) ? new AlreadyExistException("word") : new DoesNotExistException("user", "word");
         }
         return "success";
     }

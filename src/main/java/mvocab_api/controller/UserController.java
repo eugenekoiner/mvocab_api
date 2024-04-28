@@ -2,7 +2,8 @@ package mvocab_api.controller;
 
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.UserEntity;
-import mvocab_api.model.User;
+import mvocab_api.model.UserListDTO;
+import mvocab_api.service.EntityMapper;
 import mvocab_api.service.ResponseMessage;
 import mvocab_api.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ public class UserController {
     public ResponseEntity<Object> registerUser(@RequestBody UserEntity userEntity) {
         try {
             UserEntity user = userService.registerUser(userEntity);
-            return ResponseMessage.responseMessage("id", User.toModel(user).getId());
+            return ResponseMessage.responseMessage("id", EntityMapper.INSTANCE.toUserForList(user).getId());
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
@@ -41,7 +42,7 @@ public class UserController {
     @GetMapping("{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
-            return ResponseMessage.responseMessage(User.toModel(userService.findById(id)));
+            return ResponseMessage.responseMessage(EntityMapper.INSTANCE.toUserForList(userService.findById(id)));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
@@ -51,7 +52,7 @@ public class UserController {
     @PutMapping("{id}")
     public ResponseEntity<Object> updateUser(@PathVariable Integer id, @RequestBody UserEntity userEntity) {
         try {
-            return ResponseMessage.responseMessage(User.toModel(userService.updateUser(id, userEntity)));
+            return ResponseMessage.responseMessage(EntityMapper.INSTANCE.toUserForList(userService.updateUser(id, userEntity)));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }

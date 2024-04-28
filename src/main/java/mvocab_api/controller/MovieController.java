@@ -3,9 +3,6 @@ package mvocab_api.controller;
 
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.MovieEntity;
-import mvocab_api.entity.UserEntity;
-import mvocab_api.model.Movie;
-import mvocab_api.model.User;
 import mvocab_api.service.MovieService;
 import mvocab_api.service.ResponseMessage;
 import org.springframework.http.HttpStatus;

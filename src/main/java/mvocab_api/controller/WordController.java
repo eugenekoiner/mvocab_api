@@ -2,10 +2,11 @@ package mvocab_api.controller;
 
 
 import lombok.AllArgsConstructor;
+import mvocab_api.entity.TranslationEntity;
 import mvocab_api.entity.WordEntity;
-import mvocab_api.model.Word;
 import mvocab_api.model.WordByIdDTO;
 import mvocab_api.service.ResponseMessage;
+import mvocab_api.service.EntityMapper;
 import mvocab_api.service.WordService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,16 +22,21 @@ public class WordController {
 
     // создать новое слово вместе с переводом
     @PostMapping
-    public ResponseEntity<Object> createWord(@RequestBody WordEntity wordEntity) {
+    public ResponseEntity<?> createWord(@RequestBody WordByIdDTO wordByIdDTO) {
         try {
-            WordEntity word = wordService.createWord(wordEntity);
-            return ResponseMessage.responseMessage(word);
+            WordEntity wordEntity = new WordEntity();
+
+            //wordEntity.setTranslation("sdf");
+
+
+
+            return null; //new ResponseEntity<>(wordByIdDTO.setTranslation(wordByIdDTO.getTranslation()), HttpStatus.OK);
         } catch (Exception e) {
-            return ResponseMessage.responseMessage("message", e.getMessage());
+            return ResponseEntity.badRequest().body("message: " + e.getMessage());
         }
     }
 
-    // получить список всех слов с переводами (с параметрами и пагинацией)
+    // получить список всех слов без переводов (с параметрами и пагинацией)
     @GetMapping
     public ResponseEntity<Object> findAllWords(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
         try {
@@ -44,13 +50,13 @@ public class WordController {
     @GetMapping("{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
-            return ResponseMessage.responseMessage(WordByIdDTO.toModel(wordService.findById(id)));
+            return ResponseMessage.responseMessage(EntityMapper.INSTANCE.toWordById(wordService.findById(id)));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
     }
 
-    // изменить данные конкретного слова иили его перевод
+    // изменить данные конкретного слова или его перевод
     @PutMapping("{id}")
     public ResponseEntity<Object> updateWord(@PathVariable Integer id, @RequestBody WordEntity wordEntity) {
         try {

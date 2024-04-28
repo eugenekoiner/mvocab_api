@@ -2,18 +2,12 @@ package mvocab_api.service.implimentation;
 
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.LangEntity;
-import mvocab_api.entity.MovieEntity;
-import mvocab_api.entity.WordEntity;
 import mvocab_api.exeption.DoesNotExistException;
-import mvocab_api.model.Movie;
 import mvocab_api.repository.LangRepository;
-import mvocab_api.repository.MovieRepository;
 import mvocab_api.service.LangService;
-import mvocab_api.service.LangsResponse;
-import mvocab_api.service.MovieService;
-import mvocab_api.service.MoviesResponse;
-import org.springframework.dao.DataIntegrityViolationException;
+import mvocab_api.service.PaginationResponse;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,19 +22,12 @@ public class LangServiceImpl implements LangService {
     private final LangRepository langRepository;
 
     @Override
-    public LangsResponse findAllLangs(int page, int size) {
-
+    public PaginationResponse<LangEntity> findAllLangs(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<LangEntity> langs = langRepository.findAll(pageable);
-        List<LangEntity> content = langs.stream().collect(Collectors.toList());
-        LangsResponse langsResponse = new LangsResponse();
-        langsResponse.setContent(content);
-        langsResponse.setPage(langs.getNumber());
-        langsResponse.setSize(langs.getSize());
-        langsResponse.setTotalElements(langs.getTotalElements());
-        langsResponse.setTotalPages(langs.getTotalPages());
-        langsResponse.setLast(langs.isLast());
-        return langsResponse;
+        Page<LangEntity> langsPage = langRepository.findAll(pageable);
+        List<LangEntity> content = langsPage.stream().collect(Collectors.toList());
+        return new PaginationResponse<>(new PageImpl<>(content, pageable, langsPage.getTotalElements()));
+
     }
 
     @Override

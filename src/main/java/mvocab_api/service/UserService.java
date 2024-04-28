@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface UserService {
 
-    UsersResponse findAllUsers(int page, int size);
+    PaginationResponse findAllUsers(int page, int size);
 
     UserEntity registerUser(UserEntity userEntity) throws AlreadyExistException;
 

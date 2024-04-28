@@ -7,7 +7,7 @@ import mvocab_api.exeption.DoesNotExistException;
 import java.util.List;
 
 public interface LangService {
-    LangsResponse findAllLangs (int page, int size);
+    PaginationResponse findAllLangs (int page, int size);
 
     LangEntity findById(Integer id) throws DoesNotExistException;
 

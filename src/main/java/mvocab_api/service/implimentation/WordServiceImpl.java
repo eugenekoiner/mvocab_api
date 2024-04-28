@@ -1,22 +1,21 @@
 package mvocab_api.service.implimentation;
 
 import lombok.AllArgsConstructor;
-import mvocab_api.entity.MovieEntity;
 import mvocab_api.entity.WordEntity;
 import mvocab_api.exeption.DoesNotExistException;
-import mvocab_api.model.Word;
 import mvocab_api.model.WordListDTO;
 import mvocab_api.repository.WordRepository;
+import mvocab_api.service.PaginationResponse;
+import mvocab_api.service.EntityMapper;
 import mvocab_api.service.WordService;
-import mvocab_api.service.WordsResponse;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,22 +26,19 @@ public class WordServiceImpl implements WordService {
 
     @Override
     public WordEntity createWord(WordEntity wordEntity) {
+        // Убедитесь, что translationEntity связан с wordEntity
+        if (wordEntity.getTranslation() != null) {
+            wordEntity.getTranslation().setWord(wordEntity);
+        }
         return wordRepository.save(wordEntity);
     }
 
     @Override
-    public WordsResponse findAllWords(int page, int size) {
+    public PaginationResponse findAllWords(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<WordEntity> words = wordRepository.findAll(pageable);
-        List<WordListDTO> content = words.stream().map(WordListDTO::toModel).collect(Collectors.toList());
-        WordsResponse wordsResponse = new WordsResponse();
-        wordsResponse.setContent(content);
-        wordsResponse.setPage(words.getNumber());
-        wordsResponse.setSize(words.getSize());
-        wordsResponse.setTotalElements(words.getTotalElements());
-        wordsResponse.setTotalPages(words.getTotalPages());
-        wordsResponse.setLast(words.isLast());
-        return wordsResponse;
+        Page<WordEntity> wordsPage = wordRepository.findAll(pageable);
+        List<WordListDTO> content = wordsPage.stream().map(EntityMapper.INSTANCE::toWordForList).collect(Collectors.toList());
+        return new PaginationResponse<>(new PageImpl<>(content, pageable, wordsPage.getTotalElements()));
     }
 
     @Override

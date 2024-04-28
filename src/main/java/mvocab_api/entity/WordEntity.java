@@ -12,7 +12,7 @@ import java.util.List;
 @Table(name = "word")
 public class WordEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(unique = true)
     private String word;
@@ -22,7 +22,7 @@ public class WordEntity {
 
     @JsonManagedReference
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "word")
-    private TranslationEntity wordTranslation;
+    private TranslationEntity translation;
 
     @ManyToMany(mappedBy = "userWords")
     @JsonIgnore
