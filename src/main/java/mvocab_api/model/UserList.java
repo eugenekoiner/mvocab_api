@@ -6,7 +6,7 @@ import mvocab_api.entity.LangEntity;
 import java.util.List;
 
 @Data
-public class UserListDTO {
+public class UserList {
     private Integer id;
     private String email;
     private String name;

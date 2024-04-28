@@ -3,7 +3,7 @@ package mvocab_api.service.implimentation;
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.WordEntity;
 import mvocab_api.exeption.DoesNotExistException;
-import mvocab_api.model.WordListDTO;
+import mvocab_api.model.WordList;
 import mvocab_api.repository.WordRepository;
 import mvocab_api.service.PaginationResponse;
 import mvocab_api.service.EntityMapper;
@@ -37,7 +37,7 @@ public class WordServiceImpl implements WordService {
     public PaginationResponse findAllWords(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<WordEntity> wordsPage = wordRepository.findAll(pageable);
-        List<WordListDTO> content = wordsPage.stream().map(EntityMapper.INSTANCE::toWordForList).collect(Collectors.toList());
+        List<WordList> content = wordsPage.stream().map(EntityMapper.INSTANCE::toWordForList).collect(Collectors.toList());
         return new PaginationResponse<>(new PageImpl<>(content, pageable, wordsPage.getTotalElements()));
     }
 

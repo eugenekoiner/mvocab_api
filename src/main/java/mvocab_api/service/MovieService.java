@@ -3,7 +3,7 @@ package mvocab_api.service;
 import mvocab_api.entity.MovieEntity;
 import mvocab_api.exeption.AlreadyExistException;
 import mvocab_api.exeption.DoesNotExistException;
-import mvocab_api.model.WordListDTO;
+import mvocab_api.model.WordList;
 
 import java.util.List;
 
@@ -18,5 +18,5 @@ public interface MovieService {
 
     MovieEntity createMovie(MovieEntity movieEntity) throws AlreadyExistException;
 
-    List<WordListDTO> findWordsByMovieId(Integer id) throws DoesNotExistException;
+    List<WordList> findWordsByMovieId(Integer id) throws DoesNotExistException;
 }

@@ -2,9 +2,8 @@ package mvocab_api.controller;
 
 
 import lombok.AllArgsConstructor;
-import mvocab_api.entity.TranslationEntity;
 import mvocab_api.entity.WordEntity;
-import mvocab_api.model.WordByIdDTO;
+import mvocab_api.model.WordById;
 import mvocab_api.service.ResponseMessage;
 import mvocab_api.service.EntityMapper;
 import mvocab_api.service.WordService;
@@ -22,7 +21,7 @@ public class WordController {
 
     // создать новое слово вместе с переводом
     @PostMapping
-    public ResponseEntity<?> createWord(@RequestBody WordByIdDTO wordByIdDTO) {
+    public ResponseEntity<?> createWord(@RequestBody WordById wordById) {
         try {
             WordEntity wordEntity = new WordEntity();
 
@@ -30,7 +29,7 @@ public class WordController {
 
 
 
-            return null; //new ResponseEntity<>(wordByIdDTO.setTranslation(wordByIdDTO.getTranslation()), HttpStatus.OK);
+            return null; //new ResponseEntity<>(wordById.setTranslation(wordById.getTranslation()), HttpStatus.OK);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("message: " + e.getMessage());
         }

@@ -2,7 +2,6 @@ package mvocab_api.controller;
 
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.UserEntity;
-import mvocab_api.model.UserListDTO;
 import mvocab_api.service.EntityMapper;
 import mvocab_api.service.ResponseMessage;
 import mvocab_api.service.UserService;

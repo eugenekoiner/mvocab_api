@@ -5,7 +5,7 @@ import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.UserEntity;
 import mvocab_api.exeption.AlreadyExistException;
 import mvocab_api.exeption.DoesNotExistException;
-import mvocab_api.model.UserListDTO;
+import mvocab_api.model.UserList;
 import mvocab_api.repository.UserRepository;
 import mvocab_api.service.EntityMapper;
 import mvocab_api.service.PaginationResponse;
@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     public PaginationResponse findAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<UserEntity> usersPage = userRepository.findAll(pageable);
-        List<UserListDTO> content = usersPage.stream().map(EntityMapper.INSTANCE::toUserForList).collect(Collectors.toList());
+        List<UserList> content = usersPage.stream().map(EntityMapper.INSTANCE::toUserForList).collect(Collectors.toList());
         return new PaginationResponse<>(new PageImpl<>(content, pageable, usersPage.getTotalElements()));
     }
 

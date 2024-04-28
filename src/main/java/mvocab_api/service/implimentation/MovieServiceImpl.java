@@ -3,8 +3,8 @@ package mvocab_api.service.implimentation;
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.MovieEntity;
 import mvocab_api.exeption.DoesNotExistException;
-import mvocab_api.model.MovieListDTO;
-import mvocab_api.model.WordListDTO;
+import mvocab_api.model.MovieList;
+import mvocab_api.model.WordList;
 import mvocab_api.repository.MovieRepository;
 import mvocab_api.service.EntityMapper;
 import mvocab_api.service.MovieService;
@@ -31,10 +31,10 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public PaginationResponse<MovieListDTO> findAllMovies(int page, int size) {
+    public PaginationResponse<MovieList> findAllMovies(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<MovieEntity> moviesPage = movieRepository.findAll(pageable);
-        List<MovieListDTO> content = moviesPage.stream().map(EntityMapper.INSTANCE::toMovieForList).collect(Collectors.toList());
+        List<MovieList> content = moviesPage.stream().map(EntityMapper.INSTANCE::toMovieForList).collect(Collectors.toList());
         return new PaginationResponse<>(new PageImpl<>(content, pageable, moviesPage.getTotalElements()));
     }
 
@@ -65,10 +65,10 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<WordListDTO> findWordsByMovieId(Integer id) throws DoesNotExistException {
+    public List<WordList> findWordsByMovieId(Integer id) throws DoesNotExistException {
         findById(id);
 
-        List<WordListDTO> content = movieRepository.findWordsByMovieId(id).stream().map(EntityMapper.INSTANCE::toWordForList).toList();
+        List<WordList> content = movieRepository.findWordsByMovieId(id).stream().map(EntityMapper.INSTANCE::toWordForList).toList();
         return content;
     }
 }
