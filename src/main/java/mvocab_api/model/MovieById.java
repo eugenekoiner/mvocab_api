@@ -13,5 +13,5 @@ public class MovieById {
     private Integer rating;
     private String trailer;
     private List<String> langs;
-    private List<String> movieWords;
+    private List<String> words;
 }

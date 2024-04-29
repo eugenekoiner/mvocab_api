@@ -71,7 +71,7 @@ public class UserController {
     @GetMapping("{id}/langs")
     public ResponseEntity<Object> findLangsByUserId(@PathVariable Integer id) {
         try {
-            return ResponseMessage.responseMessage(userService.findLangsByUserId(id));
+            return ResponseMessage.responseMessage("langs", userService.findLangsByUserId(id));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
@@ -102,7 +102,7 @@ public class UserController {
     @GetMapping("{id}/words")
     public ResponseEntity<Object> findWordsByUserId(@PathVariable Integer id) {
         try {
-            return ResponseMessage.responseMessage(userService.findWordsByUserId(id));
+            return ResponseMessage.responseMessage("words", userService.findWordsByUserId(id));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }

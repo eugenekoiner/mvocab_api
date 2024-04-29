@@ -3,6 +3,7 @@ package mvocab_api.service.implimentation;
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.UserEntity;
+import mvocab_api.entity.WordEntity;
 import mvocab_api.exeption.AlreadyExistException;
 import mvocab_api.exeption.DoesNotExistException;
 import mvocab_api.model.UserList;
@@ -98,10 +99,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Object findWordsByUserId(Integer id) throws DoesNotExistException {
+    public Object findWordsEntitesByUserId(Integer id) throws DoesNotExistException {
         findById(id);
         return userRepository.findWordsByUserId(id);
     }
+
+    @Override
+    public Object findWordsByUserId(Integer id) throws DoesNotExistException {
+        findById(id);
+        List<WordEntity> wordLists = userRepository.findWordsByUserId(id);
+        return wordLists.stream().map(WordEntity::getWord).toList();
+    }
+
 
     @Override
     public Object addWordByUserId(Integer id, Integer wordId) throws Exception {

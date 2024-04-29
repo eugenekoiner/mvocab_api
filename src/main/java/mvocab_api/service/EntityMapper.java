@@ -31,14 +31,13 @@ public interface EntityMapper {
     // Методы маппинга для Movie
     MovieList toMovieForList(MovieEntity entity);
 
-    @Mapping(source = "movieWords", target = "movieWords", qualifiedByName = "movieWordsToString")
-    //@Mapping(source = "movieWords", target = "langs", qualifiedByName = "movielangsToString")
+    @Mapping(source = "movieWords", target = "words", qualifiedByName = "movieWordsToString")
     MovieById toMovieById(MovieEntity entity);
 
     @Named("movieWordsToString")
-    default List<String> movieWordsToString(List<WordEntity> movieWords) {
+    default List<String> movieWordsToString(List<WordEntity> words) {
         List <String> wordList = new ArrayList<>();
-        for (WordEntity word : movieWords) {
+        for (WordEntity word : words) {
             wordList.add(word.getWord());
         }
         return wordList;

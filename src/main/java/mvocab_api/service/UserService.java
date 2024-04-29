@@ -25,6 +25,7 @@ public interface UserService {
 
     Object deleteLangByUserId(Integer id, Integer langId) throws DoesNotExistException;
 
+    Object findWordsEntitesByUserId(Integer id) throws DoesNotExistException;
     Object findWordsByUserId(Integer id) throws DoesNotExistException;
 
     Object addWordByUserId(Integer id, Integer wordId) throws Exception;
