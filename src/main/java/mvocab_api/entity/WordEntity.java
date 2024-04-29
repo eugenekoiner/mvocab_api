@@ -18,6 +18,7 @@ public class WordEntity {
     private String word;
     private String transcription;
     private String audio;
+    //todo:  надо сюда запихать стринг чтоб работало сразу с текстом а не со списком айдишников
     private Integer lang_id;
 
     @JsonManagedReference

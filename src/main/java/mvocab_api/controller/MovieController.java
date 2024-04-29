@@ -2,12 +2,24 @@ package mvocab_api.controller;
 
 
 import lombok.AllArgsConstructor;
+import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.MovieEntity;
+import mvocab_api.model.MovieById;
+import mvocab_api.service.EntityMapper;
+import mvocab_api.service.LangService;
 import mvocab_api.service.MovieService;
 import mvocab_api.service.ResponseMessage;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -36,12 +48,14 @@ public class MovieController {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
     }
-    //todo
+
     // получить данные о конкретном фильме вместе с его языками
     @GetMapping("{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
-            return ResponseMessage.responseMessage(movieService.findById(id));
+            MovieById movieById = EntityMapper.INSTANCE.toMovieById(movieService.findById(id));
+            movieById.setLangs(movieService.findLangsByMovieId(id).stream().filter(Optional::isPresent).map(Optional::get).map(langEntity -> ((LangEntity) langEntity).getName()).collect(Collectors.toList()));
+            return ResponseMessage.responseMessage(movieById);
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
@@ -77,5 +91,16 @@ public class MovieController {
         }
     }
 
-
+    // получить список языков в конкретном фильме
+    @GetMapping("{id}/langs")
+    public ResponseEntity<Object> findLangsByMovieId(@PathVariable Integer id) {
+        try {
+            return ResponseMessage.responseMessage(movieService.findLangsByMovieId(id));
+        } catch (Exception e) {
+            return ResponseMessage.responseMessage("message", e.getMessage());
+        }
+    }
 }
+
+
+

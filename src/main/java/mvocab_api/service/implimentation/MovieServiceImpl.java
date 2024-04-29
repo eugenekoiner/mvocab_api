@@ -5,6 +5,7 @@ import mvocab_api.entity.MovieEntity;
 import mvocab_api.exeption.DoesNotExistException;
 import mvocab_api.model.MovieList;
 import mvocab_api.model.WordList;
+import mvocab_api.repository.LangRepository;
 import mvocab_api.repository.MovieRepository;
 import mvocab_api.service.EntityMapper;
 import mvocab_api.service.MovieService;
@@ -16,7 +17,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
+    private final LangRepository langRepository;
 
     @Override
     public MovieEntity createMovie(MovieEntity movieEntity) {
@@ -70,5 +74,14 @@ public class MovieServiceImpl implements MovieService {
 
         List<WordList> content = movieRepository.findWordsByMovieId(id).stream().map(EntityMapper.INSTANCE::toWordForList).toList();
         return content;
+    }
+
+    @Override
+    public List<Optional> findLangsByMovieId(Integer id) throws DoesNotExistException {
+        LinkedHashSet<Optional> langIdList = new LinkedHashSet<>();
+        for (WordList word : findWordsByMovieId(id)) {
+            langIdList.add(langRepository.findById(word.getLang_id()));
+        }
+        return langIdList.stream().toList();
     }
 }
