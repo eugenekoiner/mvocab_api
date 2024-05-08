@@ -14,6 +14,8 @@ public interface MovieService {
     MovieEntity findMovieEntityById(Integer id) throws DoesNotExistException;
     MovieById findMovieById(Integer id) throws DoesNotExistException;
 
+    MovieById findMovieByName(String id) throws DoesNotExistException;
+
     MovieEntity updateMovie(Integer id, MovieEntity movieEntity) throws DoesNotExistException;
 
     String deleteMovie(Integer id) throws DoesNotExistException;

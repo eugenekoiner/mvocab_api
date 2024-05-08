@@ -38,11 +38,22 @@ public class MovieController {
         }
     }
 
-    // получить данные о конкретном фильме вместе с его языками
+    // получить данные о конкретном фильме вместе с его языками по айди
     @GetMapping("{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
             MovieById movieById = movieService.findMovieById(id);
+            return ResponseMessage.responseMessage(movieById);
+        } catch (Exception e) {
+            return ResponseMessage.responseMessage("message", e.getMessage());
+        }
+    }
+
+    // получить данные о конкретном фильме вместе с его языками по названию
+    @GetMapping("{search}")
+    public ResponseEntity<Object> findByName(@PathVariable String name) {
+        try {
+            MovieById movieById = movieService.findMovieByName(name);
             return ResponseMessage.responseMessage(movieById);
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());

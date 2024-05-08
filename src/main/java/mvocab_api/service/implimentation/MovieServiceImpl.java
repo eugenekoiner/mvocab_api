@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +52,13 @@ public class MovieServiceImpl implements MovieService {
     public MovieById findMovieById(Integer id) throws DoesNotExistException {
         MovieById movieById = EntityMapper.INSTANCE.toMovieById(movieRepository.findById(id).orElseThrow(() -> new DoesNotExistException("movie")));
         movieById.setLangs(findLangsByMovieId(id));
+        return movieById;
+    }
+
+    @Override
+    public MovieById findMovieByName(String name) throws DoesNotExistException {
+        MovieById movieById = EntityMapper.INSTANCE.toMovieById(findByNameOpenSubtitles(name));
+        movieById.setLangs(findLangsByMovieId(movieById.getId()));
         return movieById;
     }
 
@@ -95,5 +103,11 @@ public class MovieServiceImpl implements MovieService {
             langIdList.add(langRepository.findLangByWordId(word.getId()).getName());
         }
         return langIdList.stream().toList();
+    }
+
+
+
+    private MovieEntity findByNameOpenSubtitles(String name) {
+return null;
     }
 }
