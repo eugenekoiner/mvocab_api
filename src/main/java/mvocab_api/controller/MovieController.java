@@ -49,12 +49,11 @@ public class MovieController {
         }
     }
 
-    // получить данные о конкретном фильме вместе с его языками по названию
-    @GetMapping("{search}")
-    public ResponseEntity<Object> findByName(@PathVariable String name) {
+    // искать конкретный фильм по названию в базе
+    @GetMapping("search/{search}")
+    public ResponseEntity<Object> findByName(@PathVariable String search, @RequestParam(value = "page", defaultValue = "1", required = false) int page) {
         try {
-            MovieById movieById = movieService.findMovieByName(name);
-            return ResponseMessage.responseMessage(movieById);
+            return ResponseMessage.responseMessage(movieService.findMoviesByName(search, page));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }

@@ -4,6 +4,7 @@ import mvocab_api.entity.MovieEntity;
 import mvocab_api.exeption.AlreadyExistException;
 import mvocab_api.exeption.DoesNotExistException;
 import mvocab_api.model.MovieById;
+import mvocab_api.model.MovieList;
 import mvocab_api.model.WordList;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public interface MovieService {
     MovieEntity findMovieEntityById(Integer id) throws DoesNotExistException;
     MovieById findMovieById(Integer id) throws DoesNotExistException;
 
-    MovieById findMovieByName(String id) throws DoesNotExistException;
+    PaginationResponse<MovieList> findMoviesByName (String name, int page) throws DoesNotExistException;
 
     MovieEntity updateMovie(Integer id, MovieEntity movieEntity) throws DoesNotExistException;
 

@@ -13,8 +13,11 @@ public class MovieEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    private Integer imdbid;
     @Column(nullable = false)
     private String name;
+    private String type;
+    private String year;
     private String description;
     private String img;
     private Integer rating; 

@@ -11,12 +11,12 @@ public class PropertiesFileManager {
     private static Properties prop;
 
     public static PropertiesFileManager getPropertyInstance(String propertyName) {
-        if (PropertiesFileManager.propertyInstance == null) {
+        if (propertyInstance == null) {
             synchronized (PropertiesFileManager.class) {
-                PropertiesFileManager.propertyInstance = new PropertiesFileManager(propertyName);
+                propertyInstance = new PropertiesFileManager(propertyName);
             }
         }
-        return PropertiesFileManager.propertyInstance;
+        return propertyInstance;
     }
 
     public String load(String key) {
@@ -24,7 +24,7 @@ public class PropertiesFileManager {
     }
 
     private PropertiesFileManager(String propertyName) {
-        try (InputStream input = Files.newInputStream(Paths.get("src/main/resources/static/" + propertyName + ".properies"))) {
+        try (InputStream input = Files.newInputStream(Paths.get("src/main/resources/static/" + propertyName + ".properties"))) {
             prop = new Properties();
             prop.load(input);
         } catch (IOException ex) {

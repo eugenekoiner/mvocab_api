@@ -1,9 +1,9 @@
 package mvocab_api.repository;
 
-import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.MovieEntity;
-import mvocab_api.entity.UserEntity;
 import mvocab_api.entity.WordEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +27,5 @@ public interface MovieRepository extends JpaRepository<MovieEntity, Integer> {
     @Modifying
     @Query("SELECT wm.id.word FROM Movie__wordEntity wm WHERE wm.id.movie.id = :movieId")
     List<WordEntity> findWordsByMovieId(@Param("movieId") Integer movieId);
+
 }

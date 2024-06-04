@@ -18,10 +18,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import subtitles_api.omdb.OmdbApiSteps;
+import subtitles_api.omdb.dto.OmdbMovieListDTO;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,10 +57,11 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public MovieById findMovieByName(String name) throws DoesNotExistException {
-        MovieById movieById = EntityMapper.INSTANCE.toMovieById(findByNameOpenSubtitles(name));
-        movieById.setLangs(findLangsByMovieId(movieById.getId()));
-        return movieById;
+    public PaginationResponse<MovieList> findMoviesByName(String name, int page) {
+        Page<OmdbMovieListDTO> moviesPage = new OmdbApiSteps().getOmdbMovieListByName(name, page);
+        List<MovieList> content = moviesPage.stream().map(EntityMapper.INSTANCE::omdbToMovieList).collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page, content.size());
+        return new PaginationResponse<>(new PageImpl<>(content, pageable, moviesPage.getTotalElements()));
     }
 
     @Override
@@ -105,9 +107,4 @@ public class MovieServiceImpl implements MovieService {
         return langIdList.stream().toList();
     }
 
-
-
-    private MovieEntity findByNameOpenSubtitles(String name) {
-return null;
-    }
 }

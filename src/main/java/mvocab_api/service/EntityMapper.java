@@ -9,6 +9,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import subtitles_api.omdb.dto.OmdbMovieListDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,10 @@ public interface EntityMapper {
 
     // Методы маппинга для Movie
     MovieList toMovieForList(MovieEntity entity);
+
+    @Mapping(source = "title", target = "name")
+    @Mapping(source = "poster", target = "img")
+    MovieList omdbToMovieList(OmdbMovieListDTO movieOmdb);
 
     @Mapping(source = "movieWords", target = "words", qualifiedByName = "movieWordsToString")
     MovieById toMovieById(MovieEntity entity);
