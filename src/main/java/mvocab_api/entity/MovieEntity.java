@@ -25,14 +25,15 @@ public class MovieEntity {
     private String genre;
     private String director;
     private String writer;
-    private String actros;
+    private String actors;
     private String country;
     private String awards;
     private String ratings;
-    private String imdbRating;
     private String description;
     private String img;
     private String trailer;
+    private String imdb_rating;
+    private String langs;
 
     @ManyToMany(mappedBy = "userMovies")
     @JsonIgnore

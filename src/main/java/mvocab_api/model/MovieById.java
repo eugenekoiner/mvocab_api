@@ -7,7 +7,6 @@ import java.util.List;
 
 @Data
 public class MovieById {
-    private Integer id;
     private String imdbid;
     private String name;
     private String type;
@@ -17,14 +16,13 @@ public class MovieById {
     private String genre;
     private String director;
     private String writer;
-    private String actros;
+    private String actors;
     private String country;
     private String awards;
     private List<RatingsDTO> ratings;
-    private String imdbRating;
+    private String imdb_rating;
     private String description;
     private String img;
     private String trailer;
     private String langs;
-    private List<String> words;
 }

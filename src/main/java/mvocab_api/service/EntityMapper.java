@@ -57,10 +57,8 @@ public interface EntityMapper {
     }
 
 
-    @Mapping(source = "movieWords", target = "words", qualifiedByName = "movieWordsToString")
     @Mapping(source = "ratings", target = "ratings", qualifiedByName = "ratingsToRatingsDTO")
     MovieById toMovieById(MovieEntity entity);
-
 
     @Named("ratingsToRatingsDTO")
     default List<RatingsDTO> ratingsToRatingsDTO(String ratings) {
@@ -72,16 +70,6 @@ public interface EntityMapper {
             return new ArrayList<>();
         }
     }
-
-    @Named("movieWordsToString")
-    default List<String> movieWordsToString(List<WordEntity> words) {
-        List <String> wordList = new ArrayList<>();
-        for (WordEntity word : words) {
-            wordList.add(word.getWord());
-        }
-        return wordList;
-    }
-
 
 
     // Методы маппинга для User

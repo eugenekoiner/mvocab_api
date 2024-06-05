@@ -16,7 +16,7 @@ public interface MovieRepository extends JpaRepository<MovieEntity, Integer> {
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE MovieEntity m SET m.name = :#{#movie.name}, m.description = :#{#movie.description}, m.ratings = :#{#movie.ratings} WHERE m.id = :id")
+    @Query(value = "UPDATE MovieEntity m SET m.name = :#{#movie.name}, m.description = :#{#movie.description}, m.langs = :#{#movie.langs}, m.writer = :#{#movie.writer}, m.released = :#{#movie.released}, m.rated = :#{#movie.rated}, m.imdb_rating = :#{#movie.imdb_rating}, m.genre = :#{#movie.genre}, m.director = :#{#movie.director}, m.country = :#{#movie.country}, m.awards = :#{#movie.awards}, m.actors = :#{#movie.actors}, m.year = :#{#movie.year}, m.type = :#{#movie.type}, m.imdbid = :#{#movie.imdbid}, m.img = :#{#movie.img}, m.trailer = :#{#movie.trailer},m.ratings = :#{#movie.ratings} WHERE m.id = :id")
     int updateMovieById(@Param("id") Integer id, @Param("movie") MovieEntity movieEntity);
 
     @Transactional
