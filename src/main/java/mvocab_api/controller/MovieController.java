@@ -34,8 +34,8 @@ public class MovieController {
     @GetMapping
     public ResponseEntity<Object> findMovie(@RequestParam(value = "page", defaultValue = "1", required = false) int page,
                                             @RequestParam(value = "size", defaultValue = "10", required = false) int size,
-                                            @RequestParam(value = "s", required = false) String search,
-                                            @RequestParam(value = "i", required = false) String imdbId) {
+                                            @RequestParam(value = "search", required = false) String search,
+                                            @RequestParam(value = "imdbid", required = false) String imdbId) {
         try {
             if (imdbId != null) {
                 return new ResponseEntity<>(movieService.findMovieByImdbId(imdbId), HttpStatus.OK);
@@ -50,23 +50,12 @@ public class MovieController {
         }
     }
 
-    // получить данные о конкретном фильме вместе с его языками по айди
+    // получить данные о конкретном фильме по айди
     @GetMapping("{id}")
     public ResponseEntity<Object> findMovieById(@PathVariable Integer id) {
         try {
             MovieById movieById = movieService.findMovieById(id);
             return ResponseMessage.responseMessage(movieById);
-        } catch (Exception e) {
-            return ResponseMessage.responseMessage("message", e.getMessage());
-        }
-    }
-
-    // искать конкретный фильм по названию в базе
-    @GetMapping("search/{search}")
-    public ResponseEntity<Object> findByName(@PathVariable String search,
-                                             @RequestParam(value = "page", defaultValue = "1", required = false) int page) {
-        try {
-            return ResponseMessage.responseMessage(movieService.findMoviesByName(search, page));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
