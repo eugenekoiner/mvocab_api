@@ -1,5 +1,8 @@
 package mvocab_api.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import mvocab_api.entity.MovieEntity;
 import mvocab_api.entity.TranslationEntity;
 import mvocab_api.entity.UserEntity;
@@ -9,8 +12,11 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
+import subtitles_api.omdb.dto.OmdbMovieIdDTO;
 import subtitles_api.omdb.dto.OmdbMovieListDTO;
+import subtitles_api.omdb.dto.RatingsDTO;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,8 +42,36 @@ public interface EntityMapper {
     @Mapping(source = "poster", target = "img")
     MovieList omdbToMovieList(OmdbMovieListDTO movieOmdb);
 
+    @Mapping(source = "title", target = "name")
+    @Mapping(source = "poster", target = "img")
+    @Mapping(source = "plot", target = "description")
+    @Mapping(source = "language", target = "langs")
+    MovieById omdbToMovieId(OmdbMovieIdDTO movieOmdb);
+
+    @Mapping(source = "ratings", target = "ratings", qualifiedByName = "ratingsDtoToratings")
+    MovieEntity toMovieEntity(MovieById movieById);
+
+    @Named("ratingsDtoToratings")
+    default String ratingsDtoToratings(List<RatingsDTO> ratingsList) throws JsonProcessingException {
+            return new ObjectMapper().writeValueAsString(ratingsList);
+    }
+
+
     @Mapping(source = "movieWords", target = "words", qualifiedByName = "movieWordsToString")
+    @Mapping(source = "ratings", target = "ratings", qualifiedByName = "ratingsToRatingsDTO")
     MovieById toMovieById(MovieEntity entity);
+
+
+    @Named("ratingsToRatingsDTO")
+    default List<RatingsDTO> ratingsToRatingsDTO(String ratings) {
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(ratings, new TypeReference<List<RatingsDTO>>() {});
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 
     @Named("movieWordsToString")
     default List<String> movieWordsToString(List<WordEntity> words) {
@@ -47,6 +81,8 @@ public interface EntityMapper {
         }
         return wordList;
     }
+
+
 
     // Методы маппинга для User
 

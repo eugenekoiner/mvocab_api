@@ -3,9 +3,11 @@ package mvocab_api.controller;
 
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.MovieEntity;
+import mvocab_api.exeption.DoesNotExistException;
 import mvocab_api.model.MovieById;
 import mvocab_api.service.MovieService;
 import mvocab_api.service.ResponseMessage;
+import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,11 +30,21 @@ public class MovieController {
         }
     }
 
-    // получить полный список фильмов с данными (с параметрами и пагинацией)
+    // искать фильм (с параметрами и пагинацией)
     @GetMapping
-    public ResponseEntity<Object> findAllMovies(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+    public ResponseEntity<Object> findMovie(@RequestParam(value = "page", defaultValue = "1", required = false) int page,
+                                            @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+                                            @RequestParam(value = "s", required = false) String search,
+                                            @RequestParam(value = "i", required = false) String imdbId) {
         try {
-            return new ResponseEntity<>(movieService.findAllMovies(page, size), HttpStatus.OK);
+            if (imdbId != null) {
+                return new ResponseEntity<>(movieService.findMovieByImdbId(imdbId), HttpStatus.OK);
+            } else if (search != null) {
+                return ResponseMessage.responseMessage(movieService.findMoviesByName(search, page));
+            } else {
+                //todo: сюда добавлю поиск по жанрам, типу, языкам, режиссерам, актерам и тд. Надо погуглить как делается множественный фильтр
+                return new ResponseEntity<>(movieService.findAllMovies(page, size), HttpStatus.OK);
+            }
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
@@ -40,7 +52,7 @@ public class MovieController {
 
     // получить данные о конкретном фильме вместе с его языками по айди
     @GetMapping("{id}")
-    public ResponseEntity<Object> findById(@PathVariable Integer id) {
+    public ResponseEntity<Object> findMovieById(@PathVariable Integer id) {
         try {
             MovieById movieById = movieService.findMovieById(id);
             return ResponseMessage.responseMessage(movieById);
@@ -51,7 +63,8 @@ public class MovieController {
 
     // искать конкретный фильм по названию в базе
     @GetMapping("search/{search}")
-    public ResponseEntity<Object> findByName(@PathVariable String search, @RequestParam(value = "page", defaultValue = "1", required = false) int page) {
+    public ResponseEntity<Object> findByName(@PathVariable String search,
+                                             @RequestParam(value = "page", defaultValue = "1", required = false) int page) {
         try {
             return ResponseMessage.responseMessage(movieService.findMoviesByName(search, page));
         } catch (Exception e) {
@@ -84,16 +97,6 @@ public class MovieController {
     public ResponseEntity<Object> findWordsByMovieId(@PathVariable Integer id) {
         try {
             return ResponseMessage.responseMessage("words", movieService.findWordsByMovieId(id));
-        } catch (Exception e) {
-            return ResponseMessage.responseMessage("message", e.getMessage());
-        }
-    }
-
-    // получить список языков в конкретном фильме
-    @GetMapping("{id}/langs")
-    public ResponseEntity<Object> findLangsByMovieId(@PathVariable Integer id) {
-        try {
-            return ResponseMessage.responseMessage("langs", movieService.findLangsByMovieId(id));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }

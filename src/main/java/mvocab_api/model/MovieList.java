@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class MovieList {
-    private Integer id;
+    //private Integer id;
     private String imdbid;
     private String name;
     private String type;
