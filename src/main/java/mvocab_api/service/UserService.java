@@ -2,22 +2,33 @@ package mvocab_api.service;
 
 import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.UserEntity;
-import mvocab_api.exeption.UserAlreadyExistException;
-import mvocab_api.exeption.UserDoesNotExistException;
+import mvocab_api.exeption.AlreadyExistException;
+import mvocab_api.exeption.DoesNotExistException;
 
 import java.util.List;
 
 public interface UserService {
 
-    UsersResponse findAllUsers(int page, int size);
+    PaginationResponse findAllUsers(int page, int size);
 
-    UserEntity registerUser(UserEntity userEntity) throws UserAlreadyExistException;
+    UserEntity registerUser(UserEntity userEntity) throws AlreadyExistException;
 
-    UserEntity findById(Integer id) throws UserDoesNotExistException;
+    UserEntity findById(Integer id) throws DoesNotExistException;
 
-    UserEntity updateUser(Integer id, UserEntity userEntity) throws UserDoesNotExistException;
+    UserEntity updateUser(Integer id, UserEntity userEntity) throws DoesNotExistException, AlreadyExistException;
 
-    String deleteUser(Integer id) throws UserDoesNotExistException;
+    String deleteUser(Integer id) throws DoesNotExistException;
 
-    List<LangEntity> findLangsByUserId(Integer id) throws UserDoesNotExistException;
+    List<LangEntity> findLangsByUserId(Integer id) throws DoesNotExistException;
+
+    Object addLangByUserId(Integer id, Integer langId) throws Exception;
+
+    Object deleteLangByUserId(Integer id, Integer langId) throws DoesNotExistException;
+
+    Object findWordsEntitesByUserId(Integer id) throws DoesNotExistException;
+    Object findWordsByUserId(Integer id) throws DoesNotExistException;
+
+    Object addWordByUserId(Integer id, Integer wordId) throws Exception;
+
+    String deleteWordByUserId(Integer id, Integer langId) throws DoesNotExistException;
 }
