@@ -62,11 +62,9 @@ public interface EntityMapper {
 
     @Named("ratingsToRatingsDTO")
     default List<RatingsDTO> ratingsToRatingsDTO(String ratings) {
-        ObjectMapper mapper = new ObjectMapper();
         try {
-            return mapper.readValue(ratings, new TypeReference<List<RatingsDTO>>() {});
+            return new ObjectMapper().readValue(ratings, new TypeReference<>() {});
         } catch (IOException e) {
-            e.printStackTrace();
             return new ArrayList<>();
         }
     }

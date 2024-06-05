@@ -15,10 +15,10 @@ public class OpensubtitlesApiSteps {
 
 
 
-    public Response findByName(String movieName) {
+    public Response findSubtitleByImdbId(String imdbId) {
         JsonObject response = given()
                 .spec(opensubtitlesReqSpec("subtitles"))
-                .queryParam("imdb_id", (movieName))
+                .queryParam("imdb_id", (imdbId))
                 .when()
                 .get()
                 .then()
@@ -27,10 +27,6 @@ public class OpensubtitlesApiSteps {
         MovieEntity movieEntity = new MovieEntity();
         movieEntity.setName(response.getAsJsonObject("feature_details").get("title").toString());
         movieEntity.setName(response.getAsJsonObject("feature_details").get("title").toString());
-
-
-
-         //todo вопрос что вернуть, наверно movieDTO
         return null;
     }
 
