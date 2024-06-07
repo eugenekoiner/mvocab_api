@@ -1,12 +1,10 @@
 package mvocab_api.service;
 
 import mvocab_api.entity.MovieEntity;
-import mvocab_api.exeption.AlreadyExistException;
 import mvocab_api.exeption.DoesNotExistException;
 import mvocab_api.model.MovieById;
 import mvocab_api.model.MovieList;
 import mvocab_api.model.WordList;
-import subtitles_api.omdb.dto.OmdbMovieListDTO;
 
 import java.util.List;
 
@@ -19,6 +17,7 @@ public interface MovieService {
     String deleteMovie(Integer id) throws DoesNotExistException;
     MovieEntity createMovie(MovieEntity movieEntity) throws Exception;
     List<WordList> findWordsEntitiesByMovieId(Integer id) throws DoesNotExistException;
-    List<String> findWordsByMovieId(Integer id) throws DoesNotExistException;
+    Integer findMovieIdByImdbId(String id) throws DoesNotExistException;
+    List<String> findWordsByImdbId(String imdbId) throws DoesNotExistException;
     MovieById findMovieByImdbId(String imdbId) throws Exception;
 }

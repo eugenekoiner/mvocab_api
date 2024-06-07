@@ -7,14 +7,12 @@ import mvocab_api.exeption.DoesNotExistException;
 import mvocab_api.model.MovieById;
 import mvocab_api.model.MovieList;
 import mvocab_api.model.WordList;
-import mvocab_api.repository.LangRepository;
 import mvocab_api.repository.MovieRepository;
 import mvocab_api.service.EntityMapper;
 import mvocab_api.service.MovieService;
 import mvocab_api.service.PaginationResponse;
 import mvocab_api.service.PaginationResponseForOmdbSearch;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -22,8 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import subtitles_api.omdb.OmdbApiSteps;
 import subtitles_api.omdb.dto.OmdbMovieListDTO;
+import subtitles_api.opensubtitles.OpensubtitlesApiSteps;
 
-import java.util.LinkedHashSet;
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -114,10 +113,21 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<String> findWordsByMovieId(Integer id) throws DoesNotExistException {
-        findMovieEntityById(id);
-        List<WordEntity> wordLists = movieRepository.findWordsByMovieId(id);
-        return wordLists.stream().map(WordEntity::getWord).toList();
+    public Integer findMovieIdByImdbId(String imdbId) {
+        return movieRepository.findMovieByImdbId(imdbId).getId();
+    }
+
+    @Override
+    public List<String> findWordsByImdbId(String imdbId) throws DoesNotExistException {
+
+        List<WordEntity> wordLists = movieRepository.findWordsByMovieId(movieRepository.findMovieByImdbId(imdbId).getId());
+        if (!wordLists.isEmpty()) {
+            return wordLists.stream().map(WordEntity::getWord).toList();
+        } else {
+            File srt = new OpensubtitlesApiSteps().findSubtitleByImdbId(imdbId);
+            //todo: файл получен, нужна бизнес логика его обработки
+            return null;
+        }
     }
 
 }

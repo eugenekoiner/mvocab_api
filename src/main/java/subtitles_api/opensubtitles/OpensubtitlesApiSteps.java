@@ -1,48 +1,62 @@
 package subtitles_api.opensubtitles;
 
 
-import com.google.gson.JsonObject;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import mvocab_api.entity.MovieEntity;
+
+import java.io.File;
 
 import static io.restassured.RestAssured.given;
 import static settings.SettingStorage.getStringProperty;
 
 public class OpensubtitlesApiSteps {
+    public File findSubtitleByImdbId(String imdbId) {
+        return new File(getDownloadLink(getFileId(imdbId)));
+    }
 
+    private String getDownloadLink(String fileId) {
+        return given()
+                .spec(opensubtitlesReqSpec("download"))
+                .header("Api-Key", getStringProperty("opensubtitles", "api.key"))
+                .header("User-Agent", "v1.2.3")
+                .body("{\"file_id\": " + fileId + "}")
+                .when()
+                .post()
+                .then()
+                .log().all()
+                .statusCode(200)
+                .extract()
+                .body()
+                .jsonPath()
+                .get("link").toString();
+    }
 
-
-    public Response findSubtitleByImdbId(String imdbId) {
-        JsonObject response = given()
+    private String getFileId(String imdbId) {
+        return given()
                 .spec(opensubtitlesReqSpec("subtitles"))
-                .queryParam("imdb_id", (imdbId))
+                .queryParam("imdb_id", (imdbId.replaceAll("tt", "")))
+                .header("Api-Key", getStringProperty("opensubtitles", "api.key"))
+                .header("User-Agent", "v1.2.3")
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
                 .when()
                 .get()
                 .then()
-                .statusCode(200).extract().body().jsonPath().getJsonObject("data");
-
-        MovieEntity movieEntity = new MovieEntity();
-        movieEntity.setName(response.getAsJsonObject("feature_details").get("title").toString());
-        movieEntity.setName(response.getAsJsonObject("feature_details").get("title").toString());
-        return null;
+                .log().all()
+                .statusCode(200)
+                .extract()
+                .response()
+                .jsonPath()
+                .getList("data.attributes.files.file_id")
+                .get(0).toString().replaceAll("[^0-9]*", "");
     }
 
-
-
-
-
-
-    protected RequestSpecification opensubtitlesReqSpec(String basePath) {
+    private RequestSpecification opensubtitlesReqSpec(String basePath) {
         return new RequestSpecBuilder()
-                .setBaseUri(getStringProperty("opensubtitle", "api.server") + "/api/v1")
+                .setBaseUri(getStringProperty("opensubtitles", "api.server") + "/api/v1")
                 .setBasePath(basePath)
                 .setContentType(ContentType.JSON)
                 .build();
     }
-
-
-
 }

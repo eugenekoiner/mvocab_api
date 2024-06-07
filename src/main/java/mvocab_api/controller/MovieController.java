@@ -3,11 +3,9 @@ package mvocab_api.controller;
 
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.MovieEntity;
-import mvocab_api.exeption.DoesNotExistException;
 import mvocab_api.model.MovieById;
 import mvocab_api.service.MovieService;
 import mvocab_api.service.ResponseMessage;
-import org.springframework.dao.InvalidDataAccessResourceUsageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -82,10 +80,11 @@ public class MovieController {
     }
 
     // получить список слов в конкретном фильме
-    @GetMapping("{id}/words")
-    public ResponseEntity<Object> findWordsByMovieId(@PathVariable Integer id) {
+    //todo: возможно стоит вернуть норм айдишник
+    @GetMapping("{imdbId}/words")
+    public ResponseEntity<Object> findWordsByImdbId(@PathVariable String imdbId) {
         try {
-            return ResponseMessage.responseMessage("words", movieService.findWordsByMovieId(id));
+            return ResponseMessage.responseMessage("words", movieService.findWordsByImdbId(imdbId));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
