@@ -22,7 +22,7 @@ public class WordEntity {
     private Integer lang_id;
 
     @JsonManagedReference
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "word")
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "word")
     private TranslationEntity translation;
 
     @ManyToMany(mappedBy = "userWords")

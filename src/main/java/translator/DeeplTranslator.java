@@ -1,4 +1,4 @@
-package translator.deepl;
+package translator;
 
 import com.google.gson.JsonObject;
 import org.jsoup.nodes.Element;

@@ -8,6 +8,7 @@ import mvocab_api.model.MovieById;
 import mvocab_api.model.MovieList;
 import mvocab_api.model.WordList;
 import mvocab_api.repository.MovieRepository;
+import mvocab_api.repository.WordRepository;
 import mvocab_api.service.EntityMapper;
 import mvocab_api.service.MovieService;
 import mvocab_api.service.PaginationResponse;
@@ -20,17 +21,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import subtitles_api.omdb.OmdbApiSteps;
 import subtitles_api.omdb.dto.OmdbMovieListDTO;
-import subtitles_api.opensubtitles.OpensubtitlesApiSteps;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import static filter.SrtToWords.getWordsFromSrt;
+import static subtitles_api.opensubtitles.OpensubtitlesApiSteps.findSrtByImdbId;
 
 @Service
 @AllArgsConstructor
 
 public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
+    private final WordRepository wordRepository;
 
     @Override
     public MovieEntity createMovie(MovieEntity movieEntity) throws Exception {
@@ -60,6 +65,15 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public PaginationResponseForOmdbSearch<MovieList> findMoviesByName(String name, int page) {
+        OmdbApiSteps omdbPage = new OmdbApiSteps();
+        Page<OmdbMovieListDTO> moviesPage = omdbPage.getOmdbMovieListByName(name, page);
+        List<MovieList> content = moviesPage.stream().map(EntityMapper.INSTANCE::omdbToMovieList).collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page, content.size());
+        return new PaginationResponseForOmdbSearch<>(new PageImpl<>(content, pageable, moviesPage.getTotalElements()), omdbPage.total);
+    }
+
+    @Override
     public MovieById findMovieByImdbId(String imdbId) throws Exception {
         MovieById movieById;
         try {
@@ -74,15 +88,6 @@ public class MovieServiceImpl implements MovieService {
         } catch (Exception e) {
             throw new Exception(e);
         }
-    }
-
-    @Override
-    public PaginationResponseForOmdbSearch<MovieList> findMoviesByName(String name, int page) {
-        OmdbApiSteps omdbPage = new OmdbApiSteps();
-        Page<OmdbMovieListDTO> moviesPage = omdbPage.getOmdbMovieListByName(name, page);
-        List<MovieList> content = moviesPage.stream().map(EntityMapper.INSTANCE::omdbToMovieList).collect(Collectors.toList());
-        Pageable pageable = PageRequest.of(page, content.size());
-        return new PaginationResponseForOmdbSearch<>(new PageImpl<>(content, pageable, moviesPage.getTotalElements()), omdbPage.total);
     }
 
     @Override
@@ -108,26 +113,24 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public List<WordList> findWordsEntitiesByMovieId(Integer id) throws DoesNotExistException {
         findMovieEntityById(id);
-        List<WordList> content = movieRepository.findWordsByMovieId(id).stream().map(EntityMapper.INSTANCE::toWordForList).toList();
-        return content;
+        return movieRepository.findWordsByMovieId(id).stream().map(EntityMapper.INSTANCE::toWordForList).toList();
     }
 
+//todo надо проверить все эксэпшны
     @Override
-    public Integer findMovieIdByImdbId(String imdbId) {
-        return movieRepository.findMovieByImdbId(imdbId).getId();
-    }
-
-    @Override
-    public List<String> findWordsByImdbId(String imdbId) throws DoesNotExistException {
-
-        List<WordEntity> wordLists = movieRepository.findWordsByMovieId(movieRepository.findMovieByImdbId(imdbId).getId());
+    public List<String> findWordsByMovieId(Integer id) throws Exception {
+        List<WordEntity> wordLists = movieRepository.findWordsByMovieId(id);
         if (!wordLists.isEmpty()) {
             return wordLists.stream().map(WordEntity::getWord).toList();
         } else {
-            File srt = new OpensubtitlesApiSteps().findSubtitleByImdbId(imdbId);
-            //todo: файл получен, нужна бизнес логика его обработки
-            return null;
+            InputStream srt = findSrtByImdbId(movieRepository.findMovieById(id).getImdbid());
+            TreeSet<String> allMovieWords = getWordsFromSrt(srt);
+            List<Integer> wordIds =  wordRepository.findWordEntitiesByIds(allMovieWords.stream().toList()).stream().map(WordEntity::getId).toList();
+            if(movieRepository.addWordsByMovieId(wordIds, id) < 1) {
+                throw new Exception(new Exception());
+            } else {
+                return allMovieWords.stream().toList();
+            }
         }
     }
-
 }

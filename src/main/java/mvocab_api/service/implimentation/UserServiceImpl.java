@@ -99,7 +99,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Object findWordsEntitesByUserId(Integer id) throws DoesNotExistException {
+    public List<WordEntity> findWordsEntitesByUserId(Integer id) throws DoesNotExistException {
         findById(id);
         return userRepository.findWordsByUserId(id);
     }

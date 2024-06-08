@@ -2,8 +2,6 @@ package mvocab_api.repository;
 
 import mvocab_api.entity.MovieEntity;
 import mvocab_api.entity.WordEntity;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,9 +22,19 @@ public interface MovieRepository extends JpaRepository<MovieEntity, Integer> {
     @Query(value = "DELETE FROM MovieEntity m where m.id = ?1")
     int deleteMovieById(Integer id);
 
-    @Modifying
-    @Query("SELECT wm.id.word FROM Movie__wordEntity wm WHERE wm.id.movie.id = :movieId")
+    @Query("SELECT w FROM Movie__wordEntity wm JOIN wm.id.word w LEFT JOIN FETCH w.translation WHERE wm.id.movie.id = :movieId")
     List<WordEntity> findWordsByMovieId(@Param("movieId") Integer movieId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO movie__word (movie_id, word_id) " +
+            "SELECT :movieId, w.id " +
+            "FROM word w " +
+            "WHERE w.id IN (:wordIds)", nativeQuery = true)
+    int addWordsByMovieId(@Param("wordIds") List<Integer> wordIds, @Param("movieId") Integer movieId);
+
+    @Query(value = "SELECT m FROM MovieEntity m where m.id = :id")
+    MovieEntity findMovieById(Integer id);
 
     @Query(value = "SELECT m FROM MovieEntity m where m.imdbid = :imdbId")
     MovieEntity findMovieByImdbId(String imdbId);

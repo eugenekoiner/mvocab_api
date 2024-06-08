@@ -2,14 +2,17 @@ package mvocab_api.controller;
 
 
 import lombok.AllArgsConstructor;
+import mvocab_api.entity.TranslationEntity;
 import mvocab_api.entity.WordEntity;
 import mvocab_api.model.WordById;
 import mvocab_api.service.ResponseMessage;
 import mvocab_api.service.EntityMapper;
+import mvocab_api.service.TranslationService;
 import mvocab_api.service.WordService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import translator.DeeplTranslator;
 
 
 @RestController
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 public class WordController {
     private final WordService wordService;
+    private final TranslationService translationService;
 
     // создать новое слово вместе с переводом
     @PostMapping
@@ -49,7 +53,12 @@ public class WordController {
     @GetMapping("{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
-            return ResponseMessage.responseMessage(EntityMapper.INSTANCE.toWordById(wordService.findById(id)));
+            WordEntity wordEntity = wordService.findById(id);
+            TranslationEntity translationEntity = translationService.findTranslationByLangIdAndWordId(wordEntity.getLang_id(),id);
+            if (translationEntity == null) {
+                translationService.insertTranslation(new DeeplTranslator().getDeeplTranslation(wordEntity.getWord()), wordEntity.getId());
+            }
+            return ResponseMessage.responseMessage(EntityMapper.INSTANCE.toWordById(wordEntity));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }

@@ -46,7 +46,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO user__word (user_id, word_id) VALUES (?1, ?2)", nativeQuery = true)
-    void addWordByUserId(Integer userId, Integer langId);
+    void addWordByUserId(Integer userId, Integer wordId);
 
     @Transactional
     @Modifying

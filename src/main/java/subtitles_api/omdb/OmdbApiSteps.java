@@ -14,19 +14,20 @@ import subtitles_api.omdb.dto.OmdbMovieListDTO;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
-import static settings.SettingStorage.getStringProperty;
 
 public class OmdbApiSteps {
     public int total;
     public Page<OmdbMovieListDTO> getOmdbMovieListByName(String title, int page) {
         JsonPath data = given()
                 .spec(omdbReqSpec())
-                .queryParam("apikey", getStringProperty("omdb", "api.key"))
+                .queryParam("apikey", "e36e79ce")
                 .queryParam("s", title)
                 .queryParam("page", page)
+                .header("User-Agent", "v1.2.3")
                 .when()
                 .get()
                 .then()
+                .log().all()
                 .statusCode(200)
                 .extract().response().jsonPath();
         total = data.getInt("totalResults");
@@ -37,7 +38,7 @@ public class OmdbApiSteps {
     public OmdbMovieIdDTO getOmdbMovieByImdbId(String imdbId) {
         JsonPath data = given()
                 .spec(omdbReqSpec())
-                .queryParam("apikey", getStringProperty("omdb", "api.key"))
+                .queryParam("apikey", "e36e79ce")
                 .queryParam("i", imdbId)
                 .when()
                 .get()
@@ -50,7 +51,7 @@ public class OmdbApiSteps {
 
     protected RequestSpecification omdbReqSpec() {
         return new RequestSpecBuilder()
-                .setBaseUri(getStringProperty("omdb", "api.server"))
+                .setBaseUri("https://www.omdbapi.com")
                 .setContentType(ContentType.JSON)
                 .build();
     }

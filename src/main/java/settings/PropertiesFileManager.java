@@ -9,7 +9,7 @@ import java.util.Properties;
 public class PropertiesFileManager {
     private static volatile PropertiesFileManager propertyInstance;
     private static Properties prop;
-
+//todo: сейчас использование невозмможно так как происходит путица всех переменных даже в одном потоке, надо разобраться как это работает
     public static PropertiesFileManager getPropertyInstance(String propertyName) {
         if (propertyInstance == null) {
             synchronized (PropertiesFileManager.class) {

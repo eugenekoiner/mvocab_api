@@ -26,7 +26,6 @@ public class WordServiceImpl implements WordService {
 
     @Override
     public WordEntity createWord(WordEntity wordEntity) {
-        // Убедитесь, что translationEntity связан с wordEntity
         if (wordEntity.getTranslation() != null) {
             wordEntity.getTranslation().setWord(wordEntity);
         }
@@ -65,4 +64,5 @@ public class WordServiceImpl implements WordService {
         }
         return "removed";
     }
+
 }

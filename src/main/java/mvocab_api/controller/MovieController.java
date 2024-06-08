@@ -80,11 +80,10 @@ public class MovieController {
     }
 
     // получить список слов в конкретном фильме
-    //todo: возможно стоит вернуть норм айдишник
-    @GetMapping("{imdbId}/words")
-    public ResponseEntity<Object> findWordsByImdbId(@PathVariable String imdbId) {
+    @GetMapping("{id}/words")
+    public ResponseEntity<Object> findWordsByMovieId(@PathVariable Integer id) {
         try {
-            return ResponseMessage.responseMessage("words", movieService.findWordsByImdbId(imdbId));
+            return ResponseMessage.responseMessage("words", movieService.findWordsByMovieId(id));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
