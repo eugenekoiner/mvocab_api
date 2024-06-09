@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+import translator.TranslationDTO;
 
 import java.util.List;
 
@@ -18,9 +20,9 @@ public class WordEntity {
     private String word;
     private String transcription;
     private String audio;
-    //todo:  надо сюда запихать стринг чтоб работало сразу с текстом а не со списком айдишников
     private Integer lang_id;
 
+    @ToString.Exclude
     @JsonManagedReference
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "word")
     private TranslationEntity translation;
@@ -31,4 +33,18 @@ public class WordEntity {
 
     @ManyToOne
     private MovieEntity movie;
+
+    @Transient
+    private TranslationDTO translationDTO;
+
+    @Override
+    public String toString() {
+        return "WordEntity{" +
+                "id=" + id +
+                ", word='" + word + '\'' +
+                ", transcription='" + transcription + '\'' +
+                ", audio='" + audio + '\'' +
+                ", lang_id=" + lang_id +
+                '}';
+    }
 }

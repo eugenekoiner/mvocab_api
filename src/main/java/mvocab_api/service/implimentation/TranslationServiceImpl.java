@@ -5,7 +5,7 @@ import mvocab_api.entity.TranslationEntity;
 import mvocab_api.exeption.AlreadyExistException;
 import mvocab_api.exeption.DoesNotExistException;
 import mvocab_api.repository.TranslationRepository;
-import mvocab_api.service.*;
+import mvocab_api.service.TranslationService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -32,18 +32,6 @@ public class TranslationServiceImpl implements TranslationService {
     @Override
     public TranslationEntity findTranslationByLangIdAndWordId(Integer langId, Integer wordId) {
         return translationRepository.findTranslationByLangIdAndWordId(langId, wordId).orElse(null);
-    }
-
-    @Override
-    public TranslationEntity updateTranslationById(Integer id, String translation) throws DoesNotExistException {
-        try {
-            if (translationRepository.updateTranslationById(id, translation) < 1) {
-                throw new DoesNotExistException("translation");
-            }
-        } catch (DataIntegrityViolationException | DoesNotExistException e) {
-            throw new DoesNotExistException("translation");
-        }
-        return translationRepository.findById(id).orElseThrow(() -> new DoesNotExistException("translation"));
     }
 
     @Override
