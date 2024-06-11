@@ -40,7 +40,7 @@ public class OmdbMovieIdDTO {
     @JsonProperty("imdbRating")
     private String imdb_rating;
     @JsonProperty("imdbID")
-    private String imdbid;
+    private String imdb_id;
     @JsonProperty("Type")
     private String type;
     @JsonProperty("Poster")

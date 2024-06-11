@@ -3,6 +3,7 @@ package subtitles_api.opensubtitles;
 
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
 
 import java.io.IOException;
@@ -12,17 +13,19 @@ import java.net.URL;
 import static io.restassured.RestAssured.given;
 
 public class OpensubtitlesApiSteps {
-    public static InputStream findSrtByImdbId(String imdbId) throws IOException {
-        URL url = new URL(getDownloadLink(getFileId(imdbId)));
+    public static InputStream findSrtBySrtId(int srtId) throws IOException {
+        URL url = new URL(getDownloadLink(srtId));
         return url.openStream();
-
     }
 
-    private static String getDownloadLink(String fileId) {
+    public static int getSrtByImdbId(String imdbId) {
+        return getFileId(imdbId);
+    }
+
+    private static String getDownloadLink(int fileId) {
         return given()
                 .spec(opensubtitlesReqSpec("download"))
                 .header("Api-Key", "SFYJhhez7oVWteDGWyj91EbqlQKPWwmB")
-                //.header("Authorization", "Bearer "+ authorization())
                 .header("User-Agent", "v1.2.3")
                 .body("{\"file_id\": " + fileId + "}")
                 .when()
@@ -36,8 +39,8 @@ public class OpensubtitlesApiSteps {
                 .get("link").toString();
     }
 
-    private static String getFileId(String imdbId) {
-        return given()
+    private static int getFileId(String imdbId) {
+        JsonPath data = given()
                 .spec(opensubtitlesReqSpec("subtitles"))
                 .queryParam("imdb_id", (imdbId.replaceAll("tt", "")))
                 //todo: сюда надо будет добавить изучаемый язык как то
@@ -55,9 +58,11 @@ public class OpensubtitlesApiSteps {
                 .statusCode(200)
                 .extract()
                 .response()
-                .jsonPath()
-                .getList("data.attributes.files.file_id")
-                .get(0).toString().replaceAll("[^0-9]*", "");
+                .jsonPath();
+        if (data.get("total_pages").equals(0)) {
+            return -1;
+        }
+        return Integer.parseInt(data.getList("data.attributes.files.file_id").get(0).toString().replaceAll("[^0-9]*", ""));
     }
 
     private static RequestSpecification opensubtitlesReqSpec(String basePath) {

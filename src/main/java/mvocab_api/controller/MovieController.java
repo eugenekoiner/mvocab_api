@@ -33,7 +33,7 @@ public class MovieController {
     public ResponseEntity<Object> findMovie(@RequestParam(value = "page", defaultValue = "1", required = false) int page,
                                             @RequestParam(value = "size", defaultValue = "10", required = false) int size,
                                             @RequestParam(value = "search", required = false) String search,
-                                            @RequestParam(value = "imdbid", required = false) String imdbId) {
+                                            @RequestParam(value = "imdb_id", required = false) String imdbId) {
         try {
             if (imdbId != null) {
                 return new ResponseEntity<>(movieService.findMovieByImdbId(imdbId), HttpStatus.OK);

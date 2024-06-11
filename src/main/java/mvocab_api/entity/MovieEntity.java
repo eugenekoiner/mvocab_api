@@ -3,10 +3,8 @@ package mvocab_api.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
-import subtitles_api.omdb.dto.RatingsDTO;
 
 import java.util.List;
-import java.util.Objects;
 
 @Data
 @Entity
@@ -15,7 +13,7 @@ public class MovieEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String imdbid;
+    private String imdb_id;
     @Column(nullable = false)
     private String name;
     private String type;
@@ -23,17 +21,26 @@ public class MovieEntity {
     private String rated;
     private String released;
     private String genre;
+    @Column(columnDefinition = "TEXT")
     private String director;
+    @Column(columnDefinition = "TEXT")
     private String writer;
+    @Column(columnDefinition = "TEXT")
     private String actors;
     private String country;
+    @Column(columnDefinition = "TEXT")
     private String awards;
+    @Column(columnDefinition = "TEXT")
     private String ratings;
+    @Column(columnDefinition = "TEXT")
     private String description;
+    @Column(columnDefinition = "TEXT")
     private String img;
+    @Column(columnDefinition = "TEXT")
     private String trailer;
     private String imdb_rating;
     private String langs;
+    private Integer srt_id;
 
     @ManyToMany(mappedBy = "userMovies")
     @JsonIgnore

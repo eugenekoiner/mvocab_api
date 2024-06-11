@@ -45,8 +45,7 @@ public class OmdbApiSteps {
                 .then()
                 .statusCode(200)
                 .extract().response().jsonPath();
-        OmdbMovieIdDTO movieDTO = data.getObject("", OmdbMovieIdDTO.class);
-        return movieDTO;
+        return data.getObject("", OmdbMovieIdDTO.class);
     }
 
     protected RequestSpecification omdbReqSpec() {

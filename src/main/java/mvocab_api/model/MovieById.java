@@ -1,5 +1,6 @@
 package mvocab_api.model;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 import subtitles_api.omdb.dto.RatingsDTO;
 
@@ -7,7 +8,8 @@ import java.util.List;
 
 @Data
 public class MovieById {
-    private String imdbid;
+    private Integer id;
+    private String imdb_id;
     private String name;
     private String type;
     private String year;

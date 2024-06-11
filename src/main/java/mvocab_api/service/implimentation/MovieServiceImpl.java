@@ -22,13 +22,14 @@ import org.springframework.stereotype.Service;
 import subtitles_api.omdb.OmdbApiSteps;
 import subtitles_api.omdb.dto.OmdbMovieListDTO;
 
-import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static filter.SrtToWords.getWordsFromSrt;
-import static subtitles_api.opensubtitles.OpensubtitlesApiSteps.findSrtByImdbId;
+import static subtitles_api.opensubtitles.OpensubtitlesApiSteps.findSrtBySrtId;
+import static subtitles_api.opensubtitles.OpensubtitlesApiSteps.getSrtByImdbId;
 
 @Service
 @AllArgsConstructor
@@ -37,9 +38,12 @@ public class MovieServiceImpl implements MovieService {
     private final MovieRepository movieRepository;
     private final WordRepository wordRepository;
 
+    //todo надо проверить все эксэпшны везде
+
     @Override
     public MovieEntity createMovie(MovieEntity movieEntity) throws Exception {
         try {
+            movieEntity.setSrt_id(getSrtByImdbId(movieEntity.getImdb_id()));
             return movieRepository.save(movieEntity);
         } catch (Exception ex) {
             throw new Exception(ex);
@@ -48,7 +52,7 @@ public class MovieServiceImpl implements MovieService {
 
     @Override
     public PaginationResponse<MovieList> findAllMovies(int page, int size) {
-        Pageable pageable = PageRequest.of(page-1, size);
+        Pageable pageable = PageRequest.of(page - 1, size);
         Page<MovieEntity> moviesPage = movieRepository.findAll(pageable);
         List<MovieList> content = moviesPage.stream().map(EntityMapper.INSTANCE::toMovieForList).collect(Collectors.toList());
         return new PaginationResponse<>(new PageImpl<>(content, pageable, moviesPage.getTotalElements()));
@@ -80,7 +84,8 @@ public class MovieServiceImpl implements MovieService {
             MovieEntity movie = movieRepository.findMovieByImdbId(imdbId);
             if (movie == null) {
                 movieById = EntityMapper.INSTANCE.omdbToMovieId(new OmdbApiSteps().getOmdbMovieByImdbId(imdbId));
-                createMovie(EntityMapper.INSTANCE.toMovieEntity(movieById));
+                MovieEntity movieEntity = EntityMapper.INSTANCE.toMovieEntity(movieById);
+                movieById = EntityMapper.INSTANCE.toMovieById(createMovie(movieEntity));
             } else {
                 movieById = EntityMapper.INSTANCE.toMovieById(movie);
             }
@@ -116,21 +121,24 @@ public class MovieServiceImpl implements MovieService {
         return movieRepository.findWordsByMovieId(id).stream().map(EntityMapper.INSTANCE::toWordForList).toList();
     }
 
-//todo надо проверить все эксэпшны
+
     @Override
     public List<String> findWordsByMovieId(Integer id) throws Exception {
         List<WordEntity> wordLists = movieRepository.findWordsByMovieId(id);
-        if (!wordLists.isEmpty()) {
-            return wordLists.stream().map(WordEntity::getWord).toList();
+        if (!wordLists.isEmpty()) return wordLists.stream().map(WordEntity::getWord).toList();
+        MovieEntity movieEntity = movieRepository.findMovieById(id);
+        if (movieEntity == null) {
+            throw new DoesNotExistException("movie");
         } else {
-            InputStream srt = findSrtByImdbId(movieRepository.findMovieById(id).getImdbid());
-            TreeSet<String> allMovieWords = getWordsFromSrt(srt);
-            List<Integer> wordIds =  wordRepository.findWordEntitiesByIds(allMovieWords.stream().toList()).stream().map(WordEntity::getId).toList();
-            if(movieRepository.addWordsByMovieId(wordIds, id) < 1) {
-                throw new Exception(new Exception());
-            } else {
-                return allMovieWords.stream().toList();
-            }
+            if (movieEntity.getSrt_id() == null) movieEntity.setSrt_id(getSrtByImdbId(movieEntity.getImdb_id()));
         }
+        if (movieEntity.getSrt_id() > 0) {
+            TreeSet<String> allMovieWords = getWordsFromSrt(findSrtBySrtId(movieEntity.getSrt_id()));
+            List<Integer> wordIds = wordRepository.findWordEntitiesByIds(new ArrayList<>(allMovieWords)).stream().map(WordEntity::getId).toList();
+            if (movieRepository.addWordsByMovieId(wordIds, id) < 1)
+                throw new Exception("Failed to add words by movie ID");
+            return new ArrayList<>(allMovieWords);
+        }
+        throw new DoesNotExistException("subtitle");
     }
 }
