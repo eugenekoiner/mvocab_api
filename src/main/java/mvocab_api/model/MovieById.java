@@ -1,6 +1,5 @@
 package mvocab_api.model;
 
-import jakarta.persistence.Column;
 import lombok.Data;
 import subtitles_api.omdb.dto.RatingsDTO;
 

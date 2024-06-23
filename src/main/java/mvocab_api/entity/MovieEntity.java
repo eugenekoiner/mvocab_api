@@ -3,11 +3,13 @@ package mvocab_api.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.List;
 
 @Data
 @Entity
+@DynamicInsert
 @Table(name = "movie")
 public class MovieEntity {
     @Id

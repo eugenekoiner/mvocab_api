@@ -9,23 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/users")
-@AllArgsConstructor
+
 
 public class UserController {
     private final UserService userService;
-
-    // создать нового пользователя (временно)
-    @PostMapping("register")
-    public ResponseEntity<Object> registerUser(@RequestBody UserEntity userEntity) {
-        try {
-            UserEntity user = userService.registerUser(userEntity);
-            return ResponseMessage.responseMessage("id", EntityMapper.INSTANCE.toUserForList(user).getId());
-        } catch (Exception e) {
-            return ResponseMessage.responseMessage("message", e.getMessage());
-        }
-    }
 
     // получить полный список пользователей с данными (с параметрами и пагинацией)
     @GetMapping
@@ -131,3 +121,4 @@ public class UserController {
 
 
 }
+

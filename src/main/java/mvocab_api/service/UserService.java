@@ -10,9 +10,6 @@ import java.util.List;
 public interface UserService {
 
     PaginationResponse findAllUsers(int page, int size);
-
-    UserEntity registerUser(UserEntity userEntity) throws AlreadyExistException;
-
     UserEntity findById(Integer id) throws DoesNotExistException;
 
     UserEntity updateUser(Integer id, UserEntity userEntity) throws DoesNotExistException, AlreadyExistException;

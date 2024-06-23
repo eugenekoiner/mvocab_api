@@ -37,19 +37,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity registerUser(UserEntity userEntity) throws AlreadyExistException {
-
-        if (userRepository.findByEmail(userEntity.getEmail()) != null) {
-            throw new AlreadyExistException("user");
-        }
-        try {
-            return userRepository.save(userEntity);
-        } catch (DataIntegrityViolationException e) {
-            throw new AlreadyExistException("user");
-        }
-    }
-
-    @Override
     public UserEntity findById(Integer id) throws DoesNotExistException {
         return userRepository.findById(id).orElseThrow(() -> new DoesNotExistException("user"));
     }

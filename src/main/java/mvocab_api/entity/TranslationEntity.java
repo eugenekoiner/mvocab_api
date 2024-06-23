@@ -3,9 +3,11 @@ package mvocab_api.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.ToString;
+import org.hibernate.annotations.DynamicInsert;
 
 @Data
 @Entity
+@DynamicInsert
 @Table(name = "translation")
 public class TranslationEntity {
     @Id
