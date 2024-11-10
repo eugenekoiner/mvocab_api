@@ -28,4 +28,6 @@ public interface UserService {
     Object addWordByUserId(Integer id, Integer wordId) throws Exception;
 
     String deleteWordByUserId(Integer id, Integer langId) throws DoesNotExistException;
+
+    boolean userHasAccessToHisResources(Integer id) throws DoesNotExistException;
 }

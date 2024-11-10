@@ -7,6 +7,7 @@ import mvocab_api.service.ResponseMessage;
 import mvocab_api.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @AllArgsConstructor
@@ -18,6 +19,7 @@ public class UserController {
     private final UserService userService;
 
     // получить полный список пользователей с данными (с параметрами и пагинацией)
+    @PreAuthorize("@userServiceImpl.userHasAccessToHisResources(#id)")
     @GetMapping
     public ResponseEntity<Object> findAllUsers(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
         try {
@@ -28,6 +30,7 @@ public class UserController {
     }
 
     // получить данные о конкретном пользователе
+    @PreAuthorize("@userServiceImpl.userHasAccessToHisResources(#id)")
     @GetMapping("{id}")
     public ResponseEntity<Object> findById(@PathVariable Integer id) {
         try {
@@ -38,6 +41,7 @@ public class UserController {
     }
 
     // изменить данные конкретного пользователя
+    @PreAuthorize("@userServiceImpl.userHasAccessToHisResources(#id)")
     @PutMapping("{id}")
     public ResponseEntity<Object> updateUser(@PathVariable Integer id, @RequestBody UserEntity userEntity) {
         try {
@@ -48,6 +52,7 @@ public class UserController {
     }
 
     // удалить конкретного пользователя
+    @PreAuthorize("@userServiceImpl.userHasAccessToHisResources(#id)")
     @DeleteMapping("{id}")
     public ResponseEntity<Object> deleteUser(@PathVariable Integer id) {
         try {
@@ -58,6 +63,7 @@ public class UserController {
     }
 
     // получить список языков, которые изучает конкретный пользователь (с пагинацией)
+    @PreAuthorize("@userServiceImpl.userHasAccessToHisResources(#id)")
     @GetMapping("{id}/langs")
     public ResponseEntity<Object> findLangsByUserId(@PathVariable Integer id) {
         try {
@@ -68,6 +74,7 @@ public class UserController {
     }
 
     // добавить новый язык для изучения пользователем
+    @PreAuthorize("@userServiceImpl.userHasAccessToHisResources(#id)")
     @PostMapping("{id}/langs/{langId}")
     public ResponseEntity<Object> addLangByUserId(@PathVariable Integer id, @PathVariable Integer langId) {
         try {
@@ -78,6 +85,7 @@ public class UserController {
     }
 
     // удалить язык из изучаемых у конкретного пользователя
+    @PreAuthorize("@userServiceImpl.userHasAccessToHisResources(#id)")
     @DeleteMapping("{id}/langs/{langId}")
     public ResponseEntity<Object> deleteLangByUserId(@PathVariable Integer id, @PathVariable Integer langId) {
         try {
@@ -89,6 +97,7 @@ public class UserController {
 
 
     // получить список всех изученных слов пользователя (с пагинацией и сортировкой по дате изучения)
+    @PreAuthorize("@userServiceImpl.userHasAccessToHisResources(#id)")
     @GetMapping("{id}/words")
     public ResponseEntity<Object> findWordsByUserId(@PathVariable Integer id) {
         try {
@@ -99,6 +108,7 @@ public class UserController {
     }
 
     // добавить слово в словарь пользователя
+    @PreAuthorize("@userServiceImpl.userHasAccessToHisResources(#id)")
     @PostMapping("{id}/words/{wordId}")
     public ResponseEntity<Object> addWordByUserId(@PathVariable Integer id, @PathVariable Integer wordId) {
         try {
@@ -109,6 +119,7 @@ public class UserController {
     }
 
     // удалить слово из словаря пользователя
+    @PreAuthorize("@userServiceImpl.userHasAccessToHisResources(#id)")
     @DeleteMapping("{id}/words/{wordId}")
     public ResponseEntity<Object> deleteWordByUserId(@PathVariable Integer id, @PathVariable Integer wordId) {
         try {

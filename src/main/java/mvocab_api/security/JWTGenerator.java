@@ -23,13 +23,14 @@ public class JWTGenerator {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateToken(Authentication authentication) {
+    public String generateToken(Authentication authentication, Integer userId) {
         String username = authentication.getName();
         Instant now = Instant.now();
         Instant expiry = now.plusMillis(SecurityConstant.JWT_EXPIRATION);
 
         return Jwts.builder()
                 .subject(username)
+                .claim("userId", userId)
                 .issuedAt(Date.from(now))
                 .expiration(Date.from(expiry))
                 .signWith(key)
@@ -45,6 +46,15 @@ public class JWTGenerator {
         return claims.getSubject();
     }
 
+    public Integer getUserIdFromJWT(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claims.get("userId", Integer.class);
+    }
+
     public boolean validateToken(String token) {
         try {
             Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
@@ -53,4 +63,5 @@ public class JWTGenerator {
             throw new AuthenticationCredentialsNotFoundException("JWT was expired or incorrect");
         }
     }
+
 }

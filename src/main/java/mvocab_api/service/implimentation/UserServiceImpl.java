@@ -8,6 +8,7 @@ import mvocab_api.exeption.AlreadyExistException;
 import mvocab_api.exeption.DoesNotExistException;
 import mvocab_api.model.UserList;
 import mvocab_api.repository.UserRepository;
+import mvocab_api.security.JWTGenerator;
 import mvocab_api.service.EntityMapper;
 import mvocab_api.service.PaginationResponse;
 import mvocab_api.service.UserService;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private JWTGenerator tokenGenerator;
 
     @Override
     public PaginationResponse findAllUsers(int page, int size) {
@@ -115,5 +119,15 @@ public class UserServiceImpl implements UserService {
             throw new DoesNotExistException("word");
         }
         return "removed";
+    }
+
+    @Override
+    public boolean userHasAccessToHisResources(Integer id) throws DoesNotExistException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) throw new DoesNotExistException("User is not authenticated");
+        if (authentication.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) return true;
+        String token = (String) authentication.getDetails();
+        if (token == null) throw new DoesNotExistException("Token is not available");
+        return tokenGenerator.getUserIdFromJWT(token).equals(id);
     }
 }
