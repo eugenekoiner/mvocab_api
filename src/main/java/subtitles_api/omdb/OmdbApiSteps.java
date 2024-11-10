@@ -14,13 +14,14 @@ import subtitles_api.omdb.dto.OmdbMovieListDTO;
 import java.util.List;
 
 import static io.restassured.RestAssured.given;
+import static settings.SettingStorage.getStringProperty;
 
 public class OmdbApiSteps {
     public int total;
     public Page<OmdbMovieListDTO> getOmdbMovieListByName(String title, int page) {
         JsonPath data = given()
                 .spec(omdbReqSpec())
-                .queryParam("apikey", "e36e79ce")
+                .queryParam("apikey", getStringProperty("omdb", "api.key"))
                 .queryParam("s", title)
                 .queryParam("page", page)
                 .header("User-Agent", "v1.2.3")
@@ -38,7 +39,7 @@ public class OmdbApiSteps {
     public OmdbMovieIdDTO getOmdbMovieByImdbId(String imdbId) {
         JsonPath data = given()
                 .spec(omdbReqSpec())
-                .queryParam("apikey", "e36e79ce")
+                .queryParam("apikey", getStringProperty("omdb", "api.key"))
                 .queryParam("i", imdbId)
                 .when()
                 .get()
@@ -50,7 +51,7 @@ public class OmdbApiSteps {
 
     protected RequestSpecification omdbReqSpec() {
         return new RequestSpecBuilder()
-                .setBaseUri("https://www.omdbapi.com")
+                .setBaseUri(getStringProperty("omdb", "api.server"))
                 .setContentType(ContentType.JSON)
                 .build();
     }

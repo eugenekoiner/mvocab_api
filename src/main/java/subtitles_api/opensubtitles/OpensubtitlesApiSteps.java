@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.net.URL;
 
 import static io.restassured.RestAssured.given;
+import static settings.SettingStorage.getStringProperty;
 
 public class OpensubtitlesApiSteps {
     public static InputStream findSrtBySrtId(int srtId) throws IOException {
@@ -24,8 +25,8 @@ public class OpensubtitlesApiSteps {
 
     private static String getDownloadLink(int fileId) {
         return given()
-                .spec(opensubtitlesReqSpec("download"))
-                .header("Api-Key", "SFYJhhez7oVWteDGWyj91EbqlQKPWwmB")
+                .spec(opensubtitlesReqSpec("api/v1/download"))
+                .header("Api-Key", getStringProperty("opensubtitles", "api.key"))
                 .header("User-Agent", "v1.2.3")
                 .body("{\"file_id\": " + fileId + "}")
                 .when()
@@ -41,12 +42,12 @@ public class OpensubtitlesApiSteps {
 
     private static int getFileId(String imdbId) {
         JsonPath data = given()
-                .spec(opensubtitlesReqSpec("subtitles"))
+                .spec(opensubtitlesReqSpec("api/v1/subtitles"))
                 .queryParam("imdb_id", (imdbId.replaceAll("tt", "")))
                 //todo: сюда надо будет добавить изучаемый язык как то
                 .queryParam("trusted_sources", "only")
                 .queryParam("languages", "en")
-                .header("Api-Key", "SFYJhhez7oVWteDGWyj91EbqlQKPWwmB")
+                .header("Api-Key", getStringProperty("opensubtitles", "api.key"))
                 //.header("Authorization", "Bearer "+ authorization())
                 .header("User-Agent", "v1.2.3")
                 .header("Content-Type", "application/json")
@@ -67,7 +68,7 @@ public class OpensubtitlesApiSteps {
 
     private static RequestSpecification opensubtitlesReqSpec(String basePath) {
         return new RequestSpecBuilder()
-                .setBaseUri("https://api.opensubtitles.com/api/v1")
+                .setBaseUri(getStringProperty("opensubtitles", "api.server"))
                 .setBasePath(basePath)
                 .setContentType(ContentType.JSON)
                 .build();
