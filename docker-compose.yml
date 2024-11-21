@@ -14,8 +14,8 @@ services:
 
 secrets:
   omdb_properties:
-    file: resources/static/omdb.properties
+    file: src/main/resources/static/omdb.properties
   opensubtitles_properties:
-    file: resources/static/opensubtitles.properties
+    file: src/main/resources/static/opensubtitles.properties
   security_properties:
-    file: resources/static/security.properties
+    file: src/main/resources/static/security.properties
