@@ -1,8 +1,6 @@
 package mvocab_api.repository;
 
-import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.MovieEntity;
-import mvocab_api.entity.UserEntity;
 import mvocab_api.entity.WordEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,15 +14,29 @@ public interface MovieRepository extends JpaRepository<MovieEntity, Integer> {
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE MovieEntity m SET m.name = :#{#movie.name}, m.description = :#{#movie.description}, m.rating = :#{#movie.rating} WHERE m.id = :id")
+    @Query("UPDATE MovieEntity m SET m.name = :#{#movie.name}, m.description = :#{#movie.description}, m.langs = :#{#movie.langs}, m.writer = :#{#movie.writer}, m.released = :#{#movie.released}, m.rated = :#{#movie.rated}, m.imdb_rating = :#{#movie.imdb_rating}, m.genre = :#{#movie.genre}, m.director = :#{#movie.director}, m.country = :#{#movie.country}, m.awards = :#{#movie.awards}, m.actors = :#{#movie.actors}, m.year = :#{#movie.year}, m.type = :#{#movie.type}, m.imdb_id = :#{#movie.imdb_id}, m.img = :#{#movie.img}, m.trailer = :#{#movie.trailer}, m.ratings = :#{#movie.ratings}, m.srt_id = :#{#movie.srt_id} WHERE m.id = :id")
     int updateMovieById(@Param("id") Integer id, @Param("movie") MovieEntity movieEntity);
 
     @Transactional
     @Modifying
-    @Query(value = "DELETE FROM MovieEntity f where f.id = ?1")
+    @Query("DELETE FROM MovieEntity m WHERE m.id = ?1")
     int deleteMovieById(Integer id);
 
-    @Modifying
-    @Query("SELECT wm.id.word FROM Movie__wordEntity wm WHERE wm.id.movie.id = :movieId")
+    @Query("SELECT w FROM Movie__wordEntity wm JOIN wm.id.word w LEFT JOIN FETCH w.translation WHERE wm.id.movie.id = :movieId")
     List<WordEntity> findWordsByMovieId(@Param("movieId") Integer movieId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO movie__word (movie_id, word_id) " +
+            "SELECT :movieId, w.id " +
+            "FROM word w " +
+            "WHERE w.id IN (:wordIds)", nativeQuery = true)
+    int addWordsByMovieId(@Param("wordIds") List<Integer> wordIds, @Param("movieId") Integer movieId);
+
+    @Query("SELECT m FROM MovieEntity m WHERE m.id = :id")
+    MovieEntity findMovieById(@Param("id") Integer id);
+
+    @Query("SELECT m FROM MovieEntity m WHERE m.imdb_id = :imdb_id")
+    MovieEntity findMovieByImdbId(@Param("imdb_id") String imdb_id);
+
 }

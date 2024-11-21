@@ -3,9 +3,7 @@ package mvocab_api.controller;
 
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.MovieEntity;
-import mvocab_api.entity.UserEntity;
-import mvocab_api.model.Movie;
-import mvocab_api.model.User;
+import mvocab_api.model.MovieById;
 import mvocab_api.service.MovieService;
 import mvocab_api.service.ResponseMessage;
 import org.springframework.http.HttpStatus;
@@ -30,21 +28,32 @@ public class MovieController {
         }
     }
 
-    // получить полный список фильмов с данными (с параметрами и пагинацией)
+    // искать фильм (с параметрами и пагинацией)
     @GetMapping
-    public ResponseEntity<Object> findAllMovies(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+    public ResponseEntity<Object> findMovie(@RequestParam(value = "page", defaultValue = "1", required = false) int page,
+                                            @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+                                            @RequestParam(value = "search", required = false) String search,
+                                            @RequestParam(value = "imdb_id", required = false) String imdbId) {
         try {
-            return new ResponseEntity<>(movieService.findAllMovies(page, size), HttpStatus.OK);
+            if (imdbId != null) {
+                return new ResponseEntity<>(movieService.findMovieByImdbId(imdbId), HttpStatus.OK);
+            } else if (search != null) {
+                return ResponseMessage.responseMessage(movieService.findMoviesByName(search, page));
+            } else {
+                //todo: сюда добавлю поиск по жанрам, типу, языкам, режиссерам, актерам и тд. Надо погуглить как делается множественный фильтр
+                return new ResponseEntity<>(movieService.findAllMovies(page, size), HttpStatus.OK);
+            }
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
     }
-    //todo
-    // получить данные о конкретном фильме вместе с его языками
+
+    // получить данные о конкретном фильме по айди
     @GetMapping("{id}")
-    public ResponseEntity<Object> findById(@PathVariable Integer id) {
+    public ResponseEntity<Object> findMovieById(@PathVariable Integer id) {
         try {
-            return ResponseMessage.responseMessage(movieService.findById(id));
+            MovieById movieById = movieService.findMovieById(id);
+            return ResponseMessage.responseMessage(movieById);
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
@@ -74,11 +83,12 @@ public class MovieController {
     @GetMapping("{id}/words")
     public ResponseEntity<Object> findWordsByMovieId(@PathVariable Integer id) {
         try {
-            return ResponseMessage.responseMessage(movieService.findWordsByMovieId(id));
+            return ResponseMessage.responseMessage("words", movieService.findWordsByMovieId(id));
         } catch (Exception e) {
             return ResponseMessage.responseMessage("message", e.getMessage());
         }
     }
-
-
 }
+
+
+

@@ -9,10 +9,7 @@ import java.util.List;
 
 public interface UserService {
 
-    UsersResponse findAllUsers(int page, int size);
-
-    UserEntity registerUser(UserEntity userEntity) throws AlreadyExistException;
-
+    PaginationResponse findAllUsers(int page, int size);
     UserEntity findById(Integer id) throws DoesNotExistException;
 
     UserEntity updateUser(Integer id, UserEntity userEntity) throws DoesNotExistException, AlreadyExistException;
@@ -25,7 +22,12 @@ public interface UserService {
 
     Object deleteLangByUserId(Integer id, Integer langId) throws DoesNotExistException;
 
+    Object findWordsEntitesByUserId(Integer id) throws DoesNotExistException;
     Object findWordsByUserId(Integer id) throws DoesNotExistException;
 
     Object addWordByUserId(Integer id, Integer wordId) throws Exception;
+
+    String deleteWordByUserId(Integer id, Integer langId) throws DoesNotExistException;
+
+    boolean userHasAccessToHisResources(Integer id) throws DoesNotExistException;
 }

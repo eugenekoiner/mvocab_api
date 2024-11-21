@@ -3,23 +3,24 @@ package mvocab_api.service.implimentation;
 import lombok.AllArgsConstructor;
 import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.UserEntity;
-import mvocab_api.service.ResponseMessage;
-import mvocab_api.service.UsersResponse;
+import mvocab_api.entity.WordEntity;
 import mvocab_api.exeption.AlreadyExistException;
 import mvocab_api.exeption.DoesNotExistException;
-import mvocab_api.model.User;
+import mvocab_api.model.UserList;
 import mvocab_api.repository.UserRepository;
+import mvocab_api.security.JWTGenerator;
+import mvocab_api.service.EntityMapper;
+import mvocab_api.service.PaginationResponse;
 import mvocab_api.service.UserService;
-import org.checkerframework.checker.units.qual.A;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,35 +30,14 @@ import java.util.stream.Collectors;
 
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private JWTGenerator tokenGenerator;
 
     @Override
-    public UsersResponse findAllUsers(int page, int size) {
+    public PaginationResponse findAllUsers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<UserEntity> users = userRepository.findAll(pageable);
-        List<User> content = users.stream().map(User::toModel).collect(Collectors.toList());
-        UsersResponse usersResponse = new UsersResponse();
-        usersResponse.setContent(content);
-        usersResponse.setPage(users.getNumber());
-        usersResponse.setSize(users.getSize());
-        usersResponse.setTotalElements(users.getTotalElements());
-        usersResponse.setTotalPages(users.getTotalPages());
-        usersResponse.setLast(users.isLast());
-
-        return usersResponse;
-
-    }
-
-    @Override
-    public UserEntity registerUser(UserEntity userEntity) throws AlreadyExistException {
-
-        if (userRepository.findByEmail(userEntity.getEmail()) != null) {
-            throw new AlreadyExistException("user");
-        }
-        try {
-            return userRepository.save(userEntity);
-        } catch (DataIntegrityViolationException e) {
-            throw new AlreadyExistException("user");
-        }
+        Page<UserEntity> usersPage = userRepository.findAll(pageable);
+        List<UserList> content = usersPage.stream().map(EntityMapper.INSTANCE::toUserForList).collect(Collectors.toList());
+        return new PaginationResponse<>(new PageImpl<>(content, pageable, usersPage.getTotalElements()));
     }
 
     @Override
@@ -110,19 +90,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Object findWordsByUserId(Integer id) throws DoesNotExistException {
+    public List<WordEntity> findWordsEntitesByUserId(Integer id) throws DoesNotExistException {
         findById(id);
         return userRepository.findWordsByUserId(id);
     }
 
     @Override
+    public Object findWordsByUserId(Integer id) throws DoesNotExistException {
+        findById(id);
+        List<WordEntity> wordLists = userRepository.findWordsByUserId(id);
+        return wordLists.stream().map(WordEntity::getWord).toList();
+    }
+
+
+    @Override
     public Object addWordByUserId(Integer id, Integer wordId) throws Exception {
-        //if (movie)
         try {
             userRepository.addWordByUserId(id, wordId);
         } catch (DataIntegrityViolationException e) {
-            throw (e.getMessage().toLowerCase().contains("duplicate")) ? new AlreadyExistException("lang") : new DoesNotExistException("user", "lang");
+            throw (e.getMessage().toLowerCase().contains("duplicate")) ? new AlreadyExistException("word") : new DoesNotExistException("user", "word");
         }
         return "success";
+    }
+
+    @Override
+    public String deleteWordByUserId(Integer id, Integer wordId) throws DoesNotExistException {
+        if (userRepository.deleteWordByUserId(id, wordId) < 1) {
+            throw new DoesNotExistException("word");
+        }
+        return "removed";
+    }
+
+    @Override
+    public boolean userHasAccessToHisResources(Integer id) throws DoesNotExistException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) throw new DoesNotExistException("User is not authenticated");
+        if (authentication.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) return true;
+        String token = (String) authentication.getDetails();
+        if (token == null) throw new DoesNotExistException("Token is not available");
+        return tokenGenerator.getUserIdFromJWT(token).equals(id);
     }
 }

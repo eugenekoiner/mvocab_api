@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    secrets:
+      - omdb_properties
+      - opensubtitles_properties
+      - security_properties
+    environment:
+      OMDB_PROPERTIES_PATH: /run/secrets/omdb_properties
+      OPENSUBTITLES_PROPERTIES_PATH: /run/secrets/opensubtitles_properties
+      SECURITY_PROPERTIES_PATH: /run/secrets/security_properties
+
+secrets:
+  omdb_properties:
+    file: src/main/resources/static/omdb.properties
+  opensubtitles_properties:
+    file: src/main/resources/static/opensubtitles.properties
+  security_properties:
+    file: src/main/resources/static/security.properties

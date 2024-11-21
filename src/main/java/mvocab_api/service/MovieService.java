@@ -1,25 +1,23 @@
 package mvocab_api.service;
 
-import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.MovieEntity;
-import mvocab_api.entity.UserEntity;
-import mvocab_api.entity.WordEntity;
-import mvocab_api.exeption.AlreadyExistException;
 import mvocab_api.exeption.DoesNotExistException;
+import mvocab_api.model.MovieById;
+import mvocab_api.model.MovieList;
+import mvocab_api.model.WordList;
 
+import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 public interface MovieService {
-    MoviesResponse findAllMovies(int page, int size);
-
-    MovieEntity findById(Integer id) throws DoesNotExistException;
-
+    MovieEntity createMovie(MovieEntity movieEntity) throws Exception;
+    PaginationResponse findAllMovies(int page, int size);
+    MovieEntity findMovieEntityById(Integer id) throws DoesNotExistException;
+    MovieById findMovieById(Integer id) throws DoesNotExistException;
+    PaginationResponseForOmdbSearch<MovieList> findMoviesByName (String name, int page) throws DoesNotExistException;
     MovieEntity updateMovie(Integer id, MovieEntity movieEntity) throws DoesNotExistException;
-
     String deleteMovie(Integer id) throws DoesNotExistException;
-
-    MovieEntity createMovie(MovieEntity movieEntity) throws AlreadyExistException;
-
-    List<WordEntity> findWordsByMovieId(Integer id) throws DoesNotExistException;
+    List<WordList> findWordsEntitiesByMovieId(Integer id) throws DoesNotExistException;
+    List<String> findWordsByMovieId(Integer id) throws Exception;
+    MovieById findMovieByImdbId(String imdbId) throws Exception;
 }
