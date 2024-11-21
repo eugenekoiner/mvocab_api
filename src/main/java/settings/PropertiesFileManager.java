@@ -23,14 +23,18 @@ public class PropertiesFileManager {
     }
 
     private PropertiesFileManager(String propertyName) {
-        String envPath = System.getenv(propertyName.toUpperCase() + "_PATH");
-        try (InputStream input = envPath != null
-                ? Files.newInputStream(Paths.get(envPath))
-                : Files.newInputStream(Paths.get("src/main/resources/static/" + propertyName + ".properties"))) {
-            prop = new Properties();
+        prop = new Properties();
+        String envPath = System.getenv((propertyName + "_properties").toUpperCase() + "_PATH");
+        String filePath = envPath != null
+                ? envPath
+                : "src/main/resources/static/" + propertyName + ".properties"; // Локальный путь
+
+        try (InputStream input = Files.newInputStream(Paths.get(filePath))) {
             prop.load(input);
         } catch (IOException ex) {
+            System.err.println("Failed to load properties file: " + filePath);
             ex.printStackTrace();
         }
     }
-}
+    }
+

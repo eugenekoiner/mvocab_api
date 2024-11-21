@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   app:
     build:
@@ -16,8 +14,8 @@ services:
 
 secrets:
   omdb_properties:
-    file: ./secrets/omdb.properties
+    file: resources/static/omdb.properties
   opensubtitles_properties:
-    file: ./secrets/opensubtitles.properties
+    file: resources/static/opensubtitles.properties
   security_properties:
-    file: ./secrets/security.properties
+    file: resources/static/security.properties
