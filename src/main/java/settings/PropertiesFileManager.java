@@ -23,7 +23,10 @@ public class PropertiesFileManager {
     }
 
     private PropertiesFileManager(String propertyName) {
-        try (InputStream input = Files.newInputStream(Paths.get("src/main/resources/static/" + propertyName + ".properties"))) {
+        String envPath = System.getenv(propertyName.toUpperCase() + "_PATH");
+        try (InputStream input = envPath != null
+                ? Files.newInputStream(Paths.get(envPath))
+                : Files.newInputStream(Paths.get("src/main/resources/static/" + propertyName + ".properties"))) {
             prop = new Properties();
             prop.load(input);
         } catch (IOException ex) {
