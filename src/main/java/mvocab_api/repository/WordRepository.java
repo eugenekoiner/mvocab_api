@@ -7,6 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+
 public interface WordRepository extends JpaRepository <WordEntity, Integer> {
 
     @Transactional
@@ -18,4 +21,10 @@ public interface WordRepository extends JpaRepository <WordEntity, Integer> {
     @Modifying
     @Query(value = "DELETE FROM WordEntity f where f.id = ?1")
     int deleteWordById(Integer id);
+
+    @Query("SELECT w.id FROM WordEntity w WHERE w.word = :word")
+    Optional<Integer> findIdByWord(@Param("word") String word);
+
+    @Query("SELECT w FROM WordEntity w LEFT JOIN FETCH w.translation WHERE w.word IN :words")
+    List<WordEntity> findWordEntitiesByIds(@Param("words") List<String> words);
 }

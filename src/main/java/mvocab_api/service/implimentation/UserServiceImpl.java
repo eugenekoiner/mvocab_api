@@ -8,6 +8,7 @@ import mvocab_api.exeption.AlreadyExistException;
 import mvocab_api.exeption.DoesNotExistException;
 import mvocab_api.model.UserList;
 import mvocab_api.repository.UserRepository;
+import mvocab_api.security.JWTGenerator;
 import mvocab_api.service.EntityMapper;
 import mvocab_api.service.PaginationResponse;
 import mvocab_api.service.UserService;
@@ -16,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +30,7 @@ import java.util.stream.Collectors;
 
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private JWTGenerator tokenGenerator;
 
     @Override
     public PaginationResponse findAllUsers(int page, int size) {
@@ -34,19 +38,6 @@ public class UserServiceImpl implements UserService {
         Page<UserEntity> usersPage = userRepository.findAll(pageable);
         List<UserList> content = usersPage.stream().map(EntityMapper.INSTANCE::toUserForList).collect(Collectors.toList());
         return new PaginationResponse<>(new PageImpl<>(content, pageable, usersPage.getTotalElements()));
-    }
-
-    @Override
-    public UserEntity registerUser(UserEntity userEntity) throws AlreadyExistException {
-
-        if (userRepository.findByEmail(userEntity.getEmail()) != null) {
-            throw new AlreadyExistException("user");
-        }
-        try {
-            return userRepository.save(userEntity);
-        } catch (DataIntegrityViolationException e) {
-            throw new AlreadyExistException("user");
-        }
     }
 
     @Override
@@ -99,7 +90,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Object findWordsEntitesByUserId(Integer id) throws DoesNotExistException {
+    public List<WordEntity> findWordsEntitesByUserId(Integer id) throws DoesNotExistException {
         findById(id);
         return userRepository.findWordsByUserId(id);
     }
@@ -128,5 +119,15 @@ public class UserServiceImpl implements UserService {
             throw new DoesNotExistException("word");
         }
         return "removed";
+    }
+
+    @Override
+    public boolean userHasAccessToHisResources(Integer id) throws DoesNotExistException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) throw new DoesNotExistException("User is not authenticated");
+        if (authentication.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) return true;
+        String token = (String) authentication.getDetails();
+        if (token == null) throw new DoesNotExistException("Token is not available");
+        return tokenGenerator.getUserIdFromJWT(token).equals(id);
     }
 }

@@ -3,11 +3,14 @@ package mvocab_api.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
+@DynamicInsert
 @Table(name = "user")
 public class UserEntity {
     @Id
@@ -35,4 +38,9 @@ public class UserEntity {
     @JoinTable(name = "user__movie", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "movie_id")})
     @JsonIgnore
     private List<MovieEntity> userMovies;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "user__role", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    @JsonIgnore
+    private List<RoleEntity> userRoles;
 }

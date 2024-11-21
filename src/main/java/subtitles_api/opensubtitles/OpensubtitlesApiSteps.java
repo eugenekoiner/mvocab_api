@@ -1,52 +1,76 @@
 package subtitles_api.opensubtitles;
 
 
-import com.google.gson.JsonObject;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
+import io.restassured.path.json.JsonPath;
 import io.restassured.specification.RequestSpecification;
-import mvocab_api.entity.MovieEntity;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 import static io.restassured.RestAssured.given;
 import static settings.SettingStorage.getStringProperty;
 
 public class OpensubtitlesApiSteps {
+    public static InputStream findSrtBySrtId(int srtId) throws IOException {
+        URL url = new URL(getDownloadLink(srtId));
+        return url.openStream();
+    }
 
+    public static int getSrtByImdbId(String imdbId) {
+        return getFileId(imdbId);
+    }
 
+    private static String getDownloadLink(int fileId) {
+        return given()
+                .spec(opensubtitlesReqSpec("api/v1/download"))
+                .header("Api-Key", getStringProperty("opensubtitles", "api.key"))
+                .header("User-Agent", "v1.2.3")
+                .body("{\"file_id\": " + fileId + "}")
+                .when()
+                .post()
+                .then()
+                .log().all()
+                .statusCode(200)
+                .extract()
+                .body()
+                .jsonPath()
+                .get("link").toString();
+    }
 
-    public Response findByName(String movieName) {
-        JsonObject response = given()
-                .spec(opensubtitlesReqSpec("subtitles"))
-                .queryParam("imdb_id", (movieName))
+    private static int getFileId(String imdbId) {
+        JsonPath data = given()
+                .spec(opensubtitlesReqSpec("api/v1/subtitles"))
+                .queryParam("imdb_id", (imdbId.replaceAll("tt", "")))
+                //todo: сюда надо будет добавить изучаемый язык как то
+                .queryParam("trusted_sources", "only")
+                .queryParam("languages", "en")
+                .header("Api-Key", getStringProperty("opensubtitles", "api.key"))
+                //.header("Authorization", "Bearer "+ authorization())
+                .header("User-Agent", "v1.2.3")
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
                 .when()
                 .get()
                 .then()
-                .statusCode(200).extract().body().jsonPath().getJsonObject("data");
-
-        MovieEntity movieEntity = new MovieEntity();
-        movieEntity.setName(response.getAsJsonObject("feature_details").get("title").toString());
-        movieEntity.setName(response.getAsJsonObject("feature_details").get("title").toString());
-
-
-
-         //todo вопрос что вернуть, наверно movieDTO
-        return null;
+                .log().all()
+                .statusCode(200)
+                .extract()
+                .response()
+                .jsonPath();
+        if (data.get("total_pages").equals(0)) {
+            return -1;
+        }
+        return Integer.parseInt(data.getList("data.attributes.files.file_id").get(0).toString().replaceAll("[^0-9]*", ""));
     }
 
-
-
-
-
-
-    protected RequestSpecification opensubtitlesReqSpec(String basePath) {
+    private static RequestSpecification opensubtitlesReqSpec(String basePath) {
         return new RequestSpecBuilder()
-                .setBaseUri(getStringProperty("opensubtitle", "api.server") + "/api/v1")
+                .setBaseUri(getStringProperty("opensubtitles", "api.server"))
                 .setBasePath(basePath)
                 .setContentType(ContentType.JSON)
                 .build();
     }
-
-
-
 }

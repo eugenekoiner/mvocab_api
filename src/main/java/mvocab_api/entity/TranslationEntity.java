@@ -1,21 +1,33 @@
 package mvocab_api.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
+import org.hibernate.annotations.DynamicInsert;
 
 @Data
 @Entity
+@DynamicInsert
 @Table(name = "translation")
 public class TranslationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(name = "translation")
+
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String translation;
 
-    @JsonBackReference
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "word_id")
+    @ToString.Exclude
+    @OneToOne
+    @JoinColumn(name = "word_id", referencedColumnName = "id")
     private WordEntity word;
+
+    @Override
+    public String toString() {
+        return "TranslationEntity{" +
+                "id=" + id +
+                ", translation='" + translation + '\'' +
+                '}';
+    }
 }

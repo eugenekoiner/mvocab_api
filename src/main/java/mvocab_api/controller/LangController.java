@@ -18,7 +18,7 @@ public class LangController {
 
     // получить список всех языков
     @GetMapping
-    public ResponseEntity<Object> findAllMovies(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
+    public ResponseEntity<Object> findAllLangs(@RequestParam(value = "page", defaultValue = "0", required = false) int page, @RequestParam(value = "size", defaultValue = "10", required = false) int size) {
         try {
             return new ResponseEntity<>(langService.findAllLangs(page, size), HttpStatus.OK);
         } catch (Exception e) {

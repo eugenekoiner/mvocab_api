@@ -14,7 +14,7 @@ public class OmdbMovieListDTO {
     @JsonProperty("Year")
     private String year;
     @JsonProperty("imdbID")
-    private String imdbid;
+    private String imdb_id;
     @JsonProperty("Type")
     private String type;
     @JsonProperty("Poster")

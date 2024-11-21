@@ -3,6 +3,7 @@ package mvocab_api.repository;
 import mvocab_api.entity.LangEntity;
 import mvocab_api.entity.UserEntity;
 import mvocab_api.entity.WordEntity;
+import org.apache.catalina.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -10,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
@@ -23,7 +25,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Query(value = "DELETE FROM UserEntity f where f.id = ?1")
     int deleteUserById(Integer id);
 
-    UserEntity findByEmail (String email);
+    Optional<UserEntity> findByEmail (String email);
 
     @Modifying
     @Query("SELECT ul.id.lang FROM User__langEntity ul WHERE ul.id.user.id = :userId")
@@ -46,7 +48,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Integer> {
     @Transactional
     @Modifying
     @Query(value = "INSERT INTO user__word (user_id, word_id) VALUES (?1, ?2)", nativeQuery = true)
-    void addWordByUserId(Integer userId, Integer langId);
+    void addWordByUserId(Integer userId, Integer wordId);
 
     @Transactional
     @Modifying

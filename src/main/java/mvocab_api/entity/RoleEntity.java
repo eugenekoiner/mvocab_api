@@ -10,15 +10,15 @@ import java.util.List;
 @Data
 @Entity
 @DynamicInsert
-@Table(name = "lang")
-public class LangEntity{
+@Table(name = "role")
+public class RoleEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @Column(unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "userLangs")
+    @ManyToMany(mappedBy = "userRoles")
     @JsonIgnore
     private List<UserEntity> users;
 }
