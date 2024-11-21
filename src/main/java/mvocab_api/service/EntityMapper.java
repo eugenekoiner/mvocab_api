@@ -46,9 +46,14 @@ public interface EntityMapper {
     @Mapping(source = "poster", target = "img")
     @Mapping(source = "plot", target = "description")
     @Mapping(source = "language", target = "langs")
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "trailer", ignore = true)
     MovieById omdbToMovieId(OmdbMovieIdDTO movieOmdb);
 
     @Mapping(source = "ratings", target = "ratings", qualifiedByName = "ratingsDtoToratings")
+    @Mapping(target = "srt_id", ignore = true)
+    @Mapping(target = "movieUsers", ignore = true)
+    @Mapping(target = "movieWords", ignore = true)
     MovieEntity toMovieEntity(MovieById movieById);
 
     @Named("ratingsDtoToratings")
