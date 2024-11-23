@@ -96,6 +96,26 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    public MovieById findSeriesByImdbId(String seriesimdbId, String season, String episode) throws DoesNotExistException {
+        MovieById seriesById;
+        try {
+            MovieEntity series = movieRepository.findSeriesByImdbId(seriesimdbId, season, episode);
+            if (series == null) {
+                seriesById = EntityMapper.INSTANCE.omdbToMovieId(new OmdbApiSteps().getOmdbSeriesByImdbId(seriesimdbId, season, episode));
+                MovieEntity movieEntity = EntityMapper.INSTANCE.toMovieEntity(seriesById);
+                seriesById = EntityMapper.INSTANCE.toMovieById(createMovie(movieEntity));
+            } else {
+                seriesById = EntityMapper.INSTANCE.toMovieById(series);
+            }
+            return seriesById;
+        } catch (DoesNotExistException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public MovieEntity updateMovie(Integer id, MovieEntity movieEntity) throws DoesNotExistException {
         try {
             if (movieRepository.updateMovieById(id, movieEntity) < 1) {
@@ -116,7 +136,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
-    public List<WordList> findWordsEntitiesByMovieId(Integer id) throws DoesNotExistException {
+    public List<WordList> findWordEntitiesByMovieId(Integer id) throws DoesNotExistException {
         findMovieEntityById(id);
         return movieRepository.findWordsByMovieId(id).stream().map(EntityMapper.INSTANCE::toWordForList).toList();
     }

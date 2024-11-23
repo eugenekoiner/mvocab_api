@@ -30,13 +30,19 @@ public class MovieController {
 
     // искать фильм (с параметрами и пагинацией)
     @GetMapping
-    public ResponseEntity<Object> findMovie(@RequestParam(value = "page", defaultValue = "1", required = false) int page,
-                                            @RequestParam(value = "size", defaultValue = "10", required = false) int size,
-                                            @RequestParam(value = "search", required = false) String search,
-                                            @RequestParam(value = "imdb_id", required = false) String imdbId) {
+    public ResponseEntity<Object> findMovieOrSeries(@RequestParam(value = "page", defaultValue = "1", required = false) int page,
+                                                    @RequestParam(value = "size", defaultValue = "10", required = false) int size,
+                                                    @RequestParam(value = "search", required = false) String search,
+                                                    @RequestParam(value = "imdb_id", required = false) String imdbId,
+                                                    @RequestParam(value = "season", required = false) String season,
+                                                    @RequestParam(value = "episode", required = false) String episode) {
         try {
             if (imdbId != null) {
-                return new ResponseEntity<>(movieService.findMovieByImdbId(imdbId), HttpStatus.OK);
+                if (season != null && episode != null) {
+                    return new ResponseEntity<>(movieService.findSeriesByImdbId(imdbId, season, episode), HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(movieService.findMovieByImdbId(imdbId), HttpStatus.OK);
+                }
             } else if (search != null) {
                 return ResponseMessage.responseMessage(movieService.findMoviesByName(search, page));
             } else {

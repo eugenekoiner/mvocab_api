@@ -19,6 +19,10 @@ public class OmdbMovieIdDTO {
     private String rated;
     @JsonProperty("Released")
     private String released;
+    @JsonProperty("Season")
+    private String season;
+    @JsonProperty("Episode")
+    private String episode;
     @JsonProperty("Genre")
     private String genre;
     @JsonProperty("Director")
@@ -41,6 +45,10 @@ public class OmdbMovieIdDTO {
     private String imdb_rating;
     @JsonProperty("imdbID")
     private String imdb_id;
+    @JsonProperty("seriesID")
+    private String series_id;
+    @JsonProperty("totalSeasons")
+    private String total_seasons;
     @JsonProperty("Type")
     private String type;
     @JsonProperty("Poster")

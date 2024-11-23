@@ -6,7 +6,6 @@ import mvocab_api.model.MovieById;
 import mvocab_api.model.MovieList;
 import mvocab_api.model.WordList;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public interface MovieService {
@@ -17,7 +16,8 @@ public interface MovieService {
     PaginationResponseForOmdbSearch<MovieList> findMoviesByName (String name, int page) throws DoesNotExistException;
     MovieEntity updateMovie(Integer id, MovieEntity movieEntity) throws DoesNotExistException;
     String deleteMovie(Integer id) throws DoesNotExistException;
-    List<WordList> findWordsEntitiesByMovieId(Integer id) throws DoesNotExistException;
+    List<WordList> findWordEntitiesByMovieId(Integer id) throws DoesNotExistException;
     List<String> findWordsByMovieId(Integer id) throws Exception;
     MovieById findMovieByImdbId(String imdbId) throws Exception;
+    MovieById findSeriesByImdbId(String imdbId, String season, String episode) throws Exception;
 }
