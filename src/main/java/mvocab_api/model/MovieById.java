@@ -1,14 +1,20 @@
 package mvocab_api.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import subtitles_api.omdb.dto.RatingsDTO;
 
 import java.util.List;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MovieById {
     private Integer id;
     private String imdb_id;
+    private String series_id;
+    private String season;
+    private String episode;
+    private String total_seasons;
     private String name;
     private String type;
     private String year;

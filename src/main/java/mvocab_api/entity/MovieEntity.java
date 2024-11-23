@@ -16,6 +16,10 @@ public class MovieEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String imdb_id;
+    private String series_id;
+    private String season;
+    private String episode;
+    private String total_seasons;
     @Column(nullable = false)
     private String name;
     private String type;
